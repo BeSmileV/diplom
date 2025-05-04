@@ -1,0 +1,89 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.2.15 Chrome/134.0.6998.205 Electron/35.2.1 Safari/537.36" version="26.2.15">
+  <diagram name="Use Case Diagram" id="1">
+    <mxGraphModel dx="43161" dy="58343" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-3" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="teacher" target="chatGroup">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-7" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="teacher" target="createGroupChat">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-8" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="teacher" target="chatPrivate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-9" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="teacher" target="createClassroom">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-10" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="teacher" target="createTask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-11" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="teacher" target="checkTask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="teacher" value="Преподаватель" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="80" y="120" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-4" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="student">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="300" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-5" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="student" target="chatPrivate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-6" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="student" target="doTask">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="student" value="Студент" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="80" y="320" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cayvzL67KBpX_fqkCJ0I-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=0.5;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="admin" target="adminPanel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="Администратор" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="80" y="520" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="chatGroup" value="Общение в групповых чатах" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="100" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="chatPrivate" value="Общение в личных чатах" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="180" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="createGroupChat" value="Создание группового чата" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="260" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="createClassroom" value="Создание классрума" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="340" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="createTask" value="Создание задания" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="420" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="checkTask" value="Проверка задания" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="500" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="aiAnalysis" value="Анализ кода AI" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="580" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="doTask" value="Выполнение задания" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="660" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="adminPanel" value="Управление институтами, группами и пользователями" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="740" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" style="endArrow=none;" parent="1" source="teacher" target="chatGroup" edge="1" />
+        <mxCell id="t2" style="endArrow=none;" parent="1" source="teacher" target="chatPrivate" edge="1" />
+        <mxCell id="t3" style="endArrow=none;" parent="1" source="teacher" target="createGroupChat" edge="1" />
+        <mxCell id="t4" style="endArrow=none;" parent="1" source="teacher" target="createClassroom" edge="1" />
+        <mxCell id="t5" style="endArrow=none;" parent="1" source="teacher" target="createTask" edge="1" />
+        <mxCell id="t6" style="endArrow=none;" parent="1" source="teacher" target="checkTask" edge="1" />
+        <mxCell id="t7" style="endArrow=none;" parent="1" source="teacher" target="aiAnalysis" edge="1" />
+        <mxCell id="s1" style="endArrow=none;" parent="1" source="student" target="chatGroup" edge="1" />
+        <mxCell id="s2" style="endArrow=none;" parent="1" source="student" target="chatPrivate" edge="1" />
+        <mxCell id="s3" style="endArrow=none;" parent="1" source="student" target="doTask" edge="1" />
+        <mxCell id="a1" style="endArrow=none;" parent="1" source="admin" target="adminPanel" edge="1" />
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

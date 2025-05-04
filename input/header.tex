@@ -32,7 +32,8 @@
 
 %%% Что бы использовать символ градуса (°) - \degree
 \usepackage{gensymb}
-
+\usepackage{graphicx}
+\usepackage{float}
 
 %%% Для переноса составных слов
 %\XeTeXinterchartokenstate=1
@@ -71,10 +72,11 @@
 \let\stdsection\section
 \renewcommand\section{\newpage\stdsection}
 
-%%% В введении нумерация подразделов идёт с буквой «В» (например В.1)
-\makeatletter
-\renewcommand\thesubsection{\ifnum\c@section=0{В.\arabic{subsection}}\else{\arabic{section}.\arabic{subsection}}\fi}
-\makeatother
+\newcommand{\nonumsection}[1]{%
+  \refstepcounter{section}% увеличить счётчик section
+  \section*{#1}% показать заголовок без номера
+  \addcontentsline{toc}{section}{#1}% добавить в оглавление
+}
 
 \usepackage{hyperref}
 
