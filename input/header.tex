@@ -78,4 +78,13 @@
 
 \usepackage{hyperref}
 
+\usepackage{titlesec}
 
+\titleformat{\section}[block]{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{20pt}{14pt}{8pt} % слева/сверху/снизу
+
+\titleformat{\subsection}[block]{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{20pt}{12pt}{6pt} % Уменьшаем отступ сверху до 0pt и снизу до 8pt
+
+\titleformat{\subsubsection}[block]{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{20pt}{10pt}{4pt} % Уменьшаем отступ сверху до 0pt и снизу до 6pt
