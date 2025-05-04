@@ -36,7 +36,6 @@
     \begin{itemize}
         \item Генерирует CSRF-токены.
         \item Поддерживает стратегию Single Sign-On (SSO).
-        \item Позволяет легко интегрировать внешние OAuth-провайдеры.
     \end{itemize}
 \end{enumerate}
 
@@ -46,14 +45,12 @@
 \begin{enumerate}
     \item \textbf{JWT}:
     \begin{itemize}
-        \item Access-токен действует ограниченное время (например, 1 час), а refresh-токен — до 7 дней.
-        \item Периодически обновляются ключи подписи токенов.
+        \item Access-токен действует ограниченное время (например, 5 минут), а refresh-токен — 30 дней.
     \end{itemize}
 
     \item \textbf{Auth.js}:
     \begin{itemize}
         \item Валидирует параметры входа, включая redirect URI.
-        \item Блокирует злоумышленников по IP при множественных неудачных попытках входа.
     \end{itemize}
 \end{enumerate}
 
