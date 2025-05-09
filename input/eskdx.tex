@@ -2,14 +2,14 @@
 \ESKDtitle{ Название документа }
 \ESKDdocName{ Название дипломной работы  Название дипломной работы     }
 
-\renewcommand{\ESKDcolumnXfIIname}{Руковод.}
-\renewcommand{\ESKDcolumnXfIVname}{Консул.}
-\renewcommand{\ESKDcolumnXfVIname}{Зав. Каф.}
+\renewcommand{\ESKDcolumnXfIIname}{\fontsize{9pt}{11pt}\selectfont\itshape Руковод.}
+\renewcommand{\ESKDcolumnXfIVname}{\fontsize{9pt}{11pt}\selectfont\itshape Консул.}
+\renewcommand{\ESKDcolumnXfVIname}{\fontsize{9pt}{11pt}\selectfont\itshape Зав. Каф.}
 
-\ESKDauthor{Иванов А. Б.}
-\ESKDchecker{Мельников А.Б. }
-\ESKDnormContr{ Н.Кнтр.~И.О. }
-\ESKDapprovedBy{Поляков В.М.}
+\ESKDauthor{\fontsize{8pt}{10pt}\selectfont\itshape Бондаренко С. В.}
+\ESKDchecker{\fontsize{8pt}{10pt}\selectfont\itshape Мельников А.Б. }
+\ESKDnormContr{\fontsize{8pt}{10pt}\selectfont\itshape  Н.Кнтр.~И.О. }
+\ESKDapprovedBy{\fontsize{8pt}{10pt}\selectfont\itshape Поляков В.М.}
 
 %%% Для титульника
 \ESKDtitleApprovedBy{ Должность утверждающего }{ Фам. утвер. }
@@ -23,6 +23,15 @@
 \ESKDcompany{ Предприятие }
 \ESKDclassCode{ Код по классификатору }
 
-
 \ESKDdate{ 2025/04/21 }
 
+% Поля
+\ESKDtitle{\fontsize{10pt}{12pt}\selectfont\itshape
+Разработка front-end Web – приложения – учебной среды с чатами и AI-анализом кода лабораторных работ}
+\ESKDcolumnIX{\fontsize{9pt}{11pt}\selectfont\itshape
+БГТУ им. В. Г. Шухова, ПВ-212}  
+
+\let\oldESKDcolumnII\ESKDcolumnII
+\renewcommand{\ESKDcolumnII}[1]{%
+  \oldESKDcolumnII{\fontsize{10pt}{12pt}\selectfont\itshape #1}%
+}
