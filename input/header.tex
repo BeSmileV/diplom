@@ -1,94 +1,157 @@
 %%% Здесь выбираются необходимые графы
 \documentclass[russian,utf8,pointsection,nocolumnsxix,nocolumnxxxi,nocolumnxxxii]{eskdtext}
 \usepackage{fontspec}
-\defaultfontfeatures{Mapping=tex-text} % Для того чтобы работали стандартные сочетания символов ---, --, << >> и т.п.
+\defaultfontfeatures{Mapping=tex-text}
 
-%%% Что бы работал eskdx и некоторые другие пакеты LaTeX
+%%% Чтобы работал eskdx и другие пакеты
 \usepackage{xecyr}
 
-%%% Для работы шрифтов
+%%% Шрифты и кодировки
 \usepackage{xunicode,xltxtra}
 \usepackage{listings}
 \usepackage{longtable}
 \usepackage{caption}
 
-%%% Для работы с русскими текстами (расстановки переносов, последовательность комманд строго обязательна)
-% \usepackage{polyglossia}
-% \setdefaultlanguage{russian}
-%\newfontfamily{\cyrillicfontt}{GOST_B}
-%\set{Times New Roman}
+%%% Русский текст
 \setmainfont{Times New Roman}
-\setromanfont{Times New Roman} 
-\setsansfont{Times New Roman} 
-\setmonofont{Times New Roman} 
+\setromanfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Times New Roman}
 
-% polyglossia only
-% \newfontfamily\cyrillicfont{GOST_type_A} 
-% \newfontfamily\cyrillicfontrm{GOST_type_A}
-% \newfontfamily\cyrillicfonttt{GOST_type_A}
-% \newfontfamily\cyrillicfontsf{GOST_type_A}
-%\defaultfontfeatures{Mapping=tex-text}
+%%% Математика
+\usepackage{amsmath,amssymb}
 
-%%% Для работы со сложными формулами
-\usepackage{amsmath}
-\usepackage{amssymb}
-
-%%% Что бы использовать символ градуса (°) - \degree
+%%% Символ градуса
 \usepackage{gensymb}
 
-%%% Для переноса составных слов
-%\XeTeXinterchartokenstate=1
+%%% Перенос составных слов
 \XeTeXcharclass `\- 24
 \XeTeXinterchartoks 24 0 ={\hskip\z@skip}
 \XeTeXinterchartoks 0 24 ={\nobreak}
 
-%%% Ставим подпись к рисункам. Вместо «рис. 1» будет «Рисунок 1»
+%%% Подпись «Рисунок» вместо «рис. 1»
 \addto{\captionsrussian}{\renewcommand{\figurename}{Рисунок}}
+
 %%% Убираем точки после цифр в заголовках
 \def\russian@capsformat{%
-  \def\postchapter{\@aftersepkern}%
-  \def\postsection{\@aftersepkern}%
-  \def\postsubsection{\@aftersepkern}%
-  \def\postsubsubsection{\@aftersepkern}%
-  \def\postparagraph{\@aftersepkern}%
-  \def\postsubparagraph{\@aftersepkern}%
+	\def\postchapter{\@aftersepkern}%
+	\def\postsection{\@aftersepkern}%
+	\def\postsubsection{\@aftersepkern}%
+	\def\postsubsubsection{\@aftersepkern}%
+	\def\postparagraph{\@aftersepkern}%
+	\def\postsubparagraph{\@aftersepkern}%
 }
 
-
-
-% Автоматически переносить на след. строку слова которые не убираются
-% в строке
 \sloppy
 
-%%% Для вставки рисунков
-\usepackage{graphicx}
-\usepackage{float}
-
-%%% Для вставки интернет ссылок, полезно в библиографии
-\usepackage{url}
-
-%%% Подподразделы(\subsubsection) не выводим в содержании
+%%% Графика, ссылки, ToC
+\usepackage{graphicx,float,url}
 \setcounter{tocdepth}{3}
 
-%%% Каждый раздел (\section) с новой страницы
-\let\stdsection\section
-\renewcommand\section{\newpage\stdsection}
-
-\newcommand{\nonumsection}[1]{%
-  \refstepcounter{section}% увеличить счётчик section
-  \section*{#1}% показать заголовок без номера
-  \addcontentsline{toc}{section}{#1}% добавить в оглавление
-}
-
+%%% Гиперссылки
 \usepackage{hyperref}
 
+%%% Заголовки разделов
 \usepackage{titlesec}
-
 \titleformat{\section}[block]{\normalfont\Large\bfseries}{\thesection}{1em}{}
-\titlespacing*{\section}{20pt}{14pt}{8pt} % слева/сверху/снизу
+\titlespacing*{\section}{20pt}{14pt}{8pt}
 
 \titleformat{\subsection}[block]{\normalfont\large\bfseries}{\thesubsection}{1em}{}
-\titlespacing*{\subsection}{20pt}{12pt}{6pt} % Уменьшаем отступ сверху до 0pt и снизу до 8pt
+\titlespacing*{\subsection}{20pt}{12pt}{6pt}
 
 \titleformat{\subsubsection}[block]{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
-\titlespacing*{\subsubsection}{20pt}{10pt}{4pt} % Уменьшаем отступ сверху до 0pt и снизу до 6pt
+\titlespacing*{\subsubsection}{20pt}{10pt}{4pt}
+
+%%% === Патч нумерации subsubsection ===
+\usepackage{etoolbox}               % подтягиваем \preto
+
+% 1) объявляем счётчик
+\newcounter{subsubsectcount}
+
+% 2) перед каждым \section: разрыв страницы + сброс нашего счётчика
+\preto\section{%
+	\clearpage
+	\setcounter{subsubsectcount}{0}%
+}
+
+% 3) сохраняем оригинальную команду
+\let\origsubsubsection\subsubsection
+
+% 4) переопределяем логику
+\renewcommand{\subsubsection}[1]{%
+	\stepcounter{subsubsectcount}%
+	\ifnum\value{subsubsectcount}>6
+	% после 5-й — звёздочная версия (без номера и без ToC)
+	\origsubsubsection*{#1}%
+	\else
+	% первые 5 — как обычно
+	\origsubsubsection{#1}%
+	\fi
+}
+%%% ====================================
+
+%%% 1) Подключаем пакеты (у вас уже есть)
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\setmonofont{JetBrains Mono}
+
+%%% 1) Базовый стиль
+\lstdefinestyle{custom}{
+	basicstyle=\ttfamily\small,
+	frame=single,
+	backgroundcolor=\color{gray!10},
+	keywordstyle=\bfseries\color{blue!70!black},
+	commentstyle=\itshape\color{gray!60},
+	stringstyle=\color{red!70!black},
+	numbers=left,
+	numberstyle=\tiny\color{gray!50},
+	xleftmargin=2em,
+	xrightmargin=2em,
+	showstringspaces=false,
+}
+
+%%% 2) Язык TypeScript/TSX
+\lstdefinelanguage{TypeScript}{
+	sensitive=true,          % регистрозависимый
+	breaklines=true,         % перенос длинных строк
+	morekeywords={%
+		abstract,any,as,asserts,async,await,boolean,break,case,catch,class,const,continue,%
+		debugger,declare,default,delete,do,else,enum,export,extends,false,finally,for,%
+		from,function,get,if,implements,import,in,instanceof,interface,let,module,namespace,%
+		never,new,null,number,of,package,private,protected,public,readonly,require,return,%
+		set,static,string,super,switch,symbol,this,throw,true,try,type,typeof,undefined,%
+		unique,unknown,var,void,while,with,yield%
+	},
+	morecomment=[l]{//},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]",
+	morestring=[b]',
+	alsoletter={<,>,/},
+	moredelim=**[is][\color{blue!50!black}]{<}{>},
+	literate={%
+		{<}{{$<$}}1
+		{>}{{$>$}}1
+		{/}{{$/$}}1
+	}%
+}  % <-- убедитесь, что закрывающая } на месте
+
+%%% 3) Стиль для TS/TSX
+\lstdefinestyle{tscustom}{
+style=custom,
+language=TypeScript,
+tabsize=2,
+breakatwhitespace=false,
+columns=fullflexible,
+keepspaces=true,
+breakautoindent=true,
+breakindent=1em,
+postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
+}
+
+%%% 4) Устанавливаем tscustom по умолчанию
+\lstset{style=tscustom}
+
+
+
+

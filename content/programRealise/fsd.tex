@@ -1,0 +1,123 @@
+\subsection{Архитектура по Feature-Sliced Design}
+
+Feature-Sliced Design (FSD) — это гибкий набор рекомендаций и подходов по логической организации клиентского кода, основанных на выделении независимых функциональных слоёв и зон ответственности. В отличие от строгих стандартов, FSD предоставляет разработчикам свободу выбора конкретных решений, сохраняя при этом единый общий каркас структуры. Такая архитектура повышает читаемость, масштабируемость и тестируемость приложения, а также упрощает командную разработку и поддержку кода.
+
+\subsubsection{Слой \texttt{shared}}
+
+Слой \texttt{shared} служит хранилищем нижнего уровня для общих и переиспользуемых компонентов, утилит и ресурсов, не зависящих от конкретной бизнес-логики:
+
+\begin{itemize}
+	\item \textbf{UI-компоненты общего назначения}: простые React-компоненты (кнопки, лоадеры, таблицы, модальные окна), которые не содержат бизнес-логики и могут использоваться в различных контекстах;
+	\item \textbf{Провайдеры контекста}: \texttt{DragAndDropFilesProvider}, \texttt{EnterKeyHandlerProvider}, а также другие контексты, обеспечивающие единообразную работу с событиями и состояниями на уровне всего приложения;
+	\item \textbf{Утилиты и хелперы}: функции для форматирования дат и чисел, генерации уникальных идентификаторов, работы с localStorage и пр.;
+	\item \textbf{Кастомные хуки общего назначения}: \texttt{useSearchParamsListener}, \texttt{useWindowSize}, \texttt{usePreviousValue} и другие, позволяющие сократить дублирование кода;
+	\item \textbf{SVG-иконки и графика}: импорт через SVGR для единообразного подключения и управления атрибутами SVG;
+	\item \textbf{Компоненты навигации и управления состоянием}: \texttt{PaginationComponent} для управления пагинацией через URL-параметры, \texttt{Breadcrumbs}, \texttt{Tabs} и т. д.
+\end{itemize}
+
+Каждый элемент слоя \texttt{shared} сопровождается подробной документацией и примерами использования, что ускоряет обучение новых участников команды и снижает риски ошибок.
+
+\subsubsection{Слой \texttt{entities}}
+
+Слой \texttt{entities} отвечает за интеграцию с внешними сервисами и описывает доменные модели:
+
+\begin{itemize}
+	\item \texttt{api/}: тонкий слой-абстракция над HTTP-клиентами (\texttt{fetch}/\texttt{axios}), где функции названы в соответствии с операциями Swagger/OpenAPI (например, \texttt{getUserProfile}, \texttt{createOrder});
+	\item \texttt{types/}: TypeScript-интерфейсы и типы для запросов и ответов (E.g. \texttt{UserProfileResponseType}, \texttt{OrderCreateRequestBodyType});
+	\item \texttt{models/}: классы и мапперы (mapper) для преобразования сырых данных из API в объекты, удобные для работы в приложении;
+	\item \texttt{services/}: дополнительные обёртки для работы с локальным кэшем (IndexedDB, localStorage) или реализации retry-логики и таймаутов;
+\end{itemize}
+
+Кроме того, здесь же располагаются функции для обработки ошибок и логирования, а также константы (URL-ы, ключи хранящихся данных) для единообразия использования.
+
+\subsubsection{Слои \texttt{features}, \texttt{widgets}, \texttt{pages}}
+
+Главные рабочие слои приложения, отвечающие за реализацию конкретной функциональности:
+
+\begin{enumerate}
+	\item \textbf{\texttt{pages}}: маршрутизация и верхний уровень страницы. Здесь описываются пути, разрешения доступа (guards), асинхронная загрузка данных на уровне страницы и выбор необходимого набора виджетов;
+	\item \textbf{\texttt{widgets}}: презентационные и «умные» компоненты, разделённые по Smart/Presentational-паттерну:
+	\begin{itemize}
+		\item \emph{Presentational}: исключительно UI и пропсы, без прямой работы с API и глобальным состоянием;
+		\item \emph{Smart}: обёртки, получающие данные через хуки из \texttt{features}, передающие результат в презентационные компоненты;
+	\end{itemize}
+	\item \textbf{\texttt{features}}: бизнес-логика и состояние, реализованное в виде кастомных хуков, функций-редьюсеров, слайсов Redux или Zustand:
+	\begin{itemize}
+		\item \texttt{hooks.ts}: главный хук-фабрика (например, \texttt{useRegistrationUniversity});
+		\item \texttt{schema.ts}: схемы валидации через \texttt{Yup} или \texttt{Zod};
+		\item \texttt{utils.ts}: вспомогательные функции и вычисляемые селекторы;
+		\item \texttt{store.ts}: подключение к Redux/Redux Toolkit или настройка Zustand;
+	\end{itemize}
+\end{enumerate}
+
+Пример процесса разработки новой функции: сначала добавляем маршрут и контекст в \texttt{pages}, затем создаём презентационный виджет, выносим всю логику в хук в \texttt{features}, настраиваем валидацию и состояние, и наконец интегрируем с API через слой \texttt{entities}.
+
+\subsubsection{Пример: RegistrationUniversity}
+
+\begin{lstlisting}[breaklines=true,caption=RegistrationUniversityWidget]
+	// Presentation-компонент
+	export function RegistrationUniversityWidget() {
+		const { formDataRef, isError, setIsError, onSubmit, isLoading } =
+		useRegistrationUniversity();
+		
+		return (
+		<Card>
+		<CardContent>
+		<RegistrationForm
+		schema={universitySchema({ password: formDataRef.current?.password })}
+		onChangeFormData={data => (formDataRef.current = data)}
+		onChangeIsError={setIsError}
+		/>
+		<Button
+		text={isLoading ? 'Загрузка...' : 'Зарегистрировать'}
+		disabled={isError.length > 0 || isLoading}
+		onClick={onSubmit}
+		/>
+		</CardContent>
+		</Card>
+		);
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[breaklines=true,caption=useRegistrationUniversity]
+	// Smart-компонент: хук-фабрика
+	export function useRegistrationUniversity() {
+		const formDataRef = useRef<RegistrationData>();
+		const [isError, setIsError] = useState<string[]>([]);
+		const [isLoading, setIsLoading] = useState(false);
+		const router = useRouter();
+		
+		const onSubmit = async () => {
+			const data = formDataRef.current;
+			if (!data) return;
+			setIsLoading(true);
+			try {
+				const res = await registerUniversity(data);
+				if (res.ok) {
+					router.push('/admin');
+				} else {
+					// обработка ошибок от API
+					setIsError([res.errorMessage || 'Неизвестная ошибка']);
+				}
+			} catch (e) {
+				setIsError(['Сетевая ошибка, попробуйте позже']);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+		
+		return { formDataRef, isError, setIsError, onSubmit, isLoading };
+	}
+\end{lstlisting}
+
+\subsubsection{Соглашения по неймингу и структуре}
+
+Для поддержания высокого уровня единого стиля и предсказуемости структуры проекта:
+
+\begin{itemize}
+	\item Имена функций API и типов дублируют бекенд-операции;
+	\item Компоненты и хуки получают префиксы по зоне ответственности: \texttt{RegistrationForm}, \texttt{useFilesUpload} и т. д.;
+	\item В каждом каталоге \texttt{features/FeatureName} обязателен минимум файлов: \texttt{index.ts}, \texttt{hooks.ts}, \texttt{schema.ts}, \texttt{utils.ts};
+	\item Все слои должны быть описаны в README с диаграммой и ссылками на примеры использования;
+	\item Код ревью включает проверку соответствия FSD-подходу и правил TypeScript;
+\end{itemize}

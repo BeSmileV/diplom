@@ -1,0 +1,129 @@
+% Раздел 3.6: Модуль «Classrooms» (Виртуальные классы)
+\subsection{Модуль «Classrooms» (Виртуальные классы)}
+Модуль «Classrooms» обеспечивает полноценное управление виртуальными классами на клиенте, включая:
+\begin{itemize}
+  \item загрузку и отображение списка классов с поддержкой пагинации,
+  \item получение детальных данных класса и связанных заданий,
+  \item создание нового класса и перенаправление на его страницу,
+  \item интеграцию с AI-сервисом для анализа кода лабораторных работ.
+\end{itemize}
+Бизнес-логика модуля реализована ортогонально к UI через кастомные React-хуки. Ниже приведены их реализации без лишних импортов, с подробным описанием каждого шага.
+
+\subsubsection{Хук \texttt{useClassrooms}}
+Хук отвечает за загрузку списка классов и обработку параметров пагинации из строки URL. Он:
+\begin{enumerate}
+  \item Читает \texttt{skip} и \texttt{limit} через слушатель URL-параметров;
+  \item Вызывает API-функцию \texttt{getClassroomsList} с этими параметрами;
+  \item Сохраняет результат запроса во внутреннее состояние \texttt{list} и возвращает его для UI;
+  \item Управляет состоянием загрузки и ошибок (не показано на этом уровне, так как хук возвращает только данные).
+\end{enumerate}
+\begin{lstlisting}[caption={Кастомный хук useClassrooms}, label={lst:useClassrooms}]
+export function useClassrooms() {
+    const [list, setList] = useState<ClassroomListType | undefined | null>(undefined);
+    const { getSearchParams } = useSearchParamsListener();
+
+    useEffect(() => {
+        const limit = Number(getSearchParams(LIMIT_SEARCH_PARAM_NAME) || LIMIT_SEARCH_PARAM_DEFAULT);
+        const skip = Number(getSearchParams(SKIP_SEARCH_PARAM_NAME) || SKIP_SEARCH_PARAM_DEFAULT);
+        getClassroomsList({ skip, limit }).then(setList);
+    }, [
+        getSearchParams(LIMIT_SEARCH_PARAM_NAME),
+        getSearchParams(SKIP_SEARCH_PARAM_NAME)
+    ]);
+
+    return { list };
+}
+\end{lstlisting}
+
+Этот хук позволяет любому компоненту, вызывающему его, получить актуальный список классов без дублирования логики запроса и парсинга параметров.
+
+\subsubsection{Хук \texttt{useClassroomDetail}}
+Хук инкапсулирует две независимые операции:
+\begin{itemize}
+  \item получение детальной информации о классе по его идентификатору \texttt{id};
+  \item загрузку списка заданий, привязанных к данному классу, также с пагинацией.
+\end{itemize}
+Он инициирует оба запроса одновременно и возвращает два состояния: \texttt{classroom} и \texttt{list} (массив заданий).
+\begin{lstlisting}[caption={Кастомный хук useClassroomDetail}, label={lst:useClassroomDetail}]
+export function useClassroomDetail(id: number) {
+    const [classroom, setClassroom] = useState<ClassroomDetailType | undefined | null>(undefined);
+    const [list, setList] = useState<TaskListType | undefined | null>(undefined);
+    const { getSearchParams } = useSearchParamsListener();
+
+    useEffect(() => {
+        const limit = Number(getSearchParams(LIMIT_SEARCH_PARAM_NAME) || LIMIT_SEARCH_PARAM_DEFAULT);
+        const skip = Number(getSearchParams(SKIP_SEARCH_PARAM_NAME) || SKIP_SEARCH_PARAM_DEFAULT);
+
+        getClassroomDetail(id).then(setClassroom);
+        getTasksList({ classroomId: id, skip, limit }).then(setList);
+    }, [
+        id,
+        getSearchParams(LIMIT_SEARCH_PARAM_NAME),
+        getSearchParams(SKIP_SEARCH_PARAM_NAME)
+    ]);
+
+    return { classroom, list };
+}
+\end{lstlisting}
+
+Таким образом, компонент, использующий этот хук, получает и данные по самому классу, и список заданий для отображения в UI, не заботясь о деталях запросов.
+
+\subsubsection{Хук \texttt{useClassroomCreate}}
+Хук управляет процессом создания нового класса:
+\begin{enumerate}
+  \item Хранит ссылку на объект формы \texttt{formDataRef} через \texttt{useRef};
+  \item Обрабатывает коллбэк \texttt{onChangeFormData}, обновляя \texttt{formDataRef.current};
+  \item При вызове \texttt{onSubmit} отправляет текущие данные на сервер и, в случае успеха, перенаправляет пользователя на страницу нового класса.
+\end{enumerate}
+\begin{lstlisting}[caption={Кастомный хук useClassroomCreate}, label={lst:useClassroomCreate}]
+export function useClassroomCreate() {
+    const router = useRouter();
+    const formDataRef = useRef<ClassroomPostType>();
+
+    const onChangeFormData = (newFormData: ClassroomPostType) => {
+        formDataRef.current = newFormData;
+    };
+
+    const onSubmit = async () => {
+        if (!formDataRef.current) return;
+        const response = await postClassroom(formDataRef.current);
+        if (response !== null) {
+            router.replace(ROUTES_CONFIG.CLASSROOMS_DETAIL_SLUG_PAGE + response);
+        }
+    };
+
+    return { onChangeFormData, onSubmit };
+}
+\end{lstlisting}
+
+Хук минимизирует код в компонентах: весь процесс подготовки, валидации и навигации после создания вынесен внутрь.
+
+\subsubsection{Хук \texttt{useLabAnalysis}}
+Хук для интеграции AI-анализа кода лабораторных работ:
+\begin{itemize}
+  \item Хранит объект \texttt{formData} и предоставляет \texttt{setFormData} для передачи данных (код или файл) из компонента;
+  \item При вызове метода \texttt{analyze} отправляет \texttt{formData} на API (функция \texttt{postAnalyzeCode});
+  \item Сохраняет результат в \texttt{result} и ошибку в \texttt{error}.
+\end{itemize}
+\begin{lstlisting}[caption={Кастомный хук useLabAnalysis}, label={lst:useLabAnalysis}]
+export function useLabAnalysis() {
+    const [formData, setFormData] = useState<FormData | null>(null);
+    const [result, setResult] = useState<any>(null);
+    const [error, setError] = useState<string | null>(null);
+
+    const analyze = async () => {
+        if (!formData) return;
+        try {
+            const res = await postAnalyzeCode(formData);
+            if (res.ok) setResult(res.data);
+            else setError(res.error_message || 'Ошибка анализа');
+        } catch {
+            setError('Сетевая ошибка анализа');
+        }
+    };
+
+    return { formData, setFormData, result, error, analyze };
+}
+\end{lstlisting}
+
+% Конец раздела 3.6

@@ -1,0 +1,194 @@
+% Раздел 3.2: Собственная UI-библиотека и генерация форм
+\subsection{Собственная UI-библиотека и генерация форм}
+
+\subsubsection{Общая идея и мотивация}
+Для обеспечения единого стилистического и функционального каркаса клиентского приложения была разработана собственная библиотека компонентов и утилит, распространяемая через npm-пакет. В её составе присутствуют:
+\begin{itemize}
+	\item SCSS-миксины для реализации адаптивных сеток и гибкой типографики;
+	\item Набор готовых UI-компонентов (например, \texttt{Button}, \texttt{Tag}, \texttt{ScrollProvider}), не содержащих бизнес-логику;
+	\item Провайдеры глобальных состояний и контекстов (например, для управления скроллом или обработкой событий клавиатуры);
+	\item Унифицированный генератор форм \texttt{FormBuilder}, позволяющий описывать структуру и поведение сложных форм через декларативную схему.
+\end{itemize}
+Применение данной библиотеки ускоряет процессы разработки и упрощает поддержку интерфейса, так как все ключевые решения собраны в централизованном модуле с единым API и консистентной документацией.
+
+\subsubsection{Компонент \texttt{FormBuilder}: концепция и API}
+Ключевым элементом библиотеки является компонент \texttt{FormBuilder}. Он реализует маршрутизацию данных и событий между декларативной схемой формы и её полями. Основные принципы работы:
+\begin{enumerate}
+	\item Пользователь задаёт схему параметров формы, представляющую собой массив объектов с полем \texttt{type} и соответствующим набором \texttt{props}.
+	\item \texttt{FormBuilder} инициализирует внутреннее состояние формы и передаёт каждому полю текущие значения и функции обработки изменений.
+	\item При срабатывании события изменения значения поле уведомляет \texttt{FormBuilder}, который обновляет общую модель данных и вызывает коллбэк \texttt{onChange}.
+\end{enumerate}
+
+\paragraph{Определение схемы формы}
+Схема формы описывается функцией, возвращающей массив объектов. Каждый объект содержит:
+\begin{itemize}
+	\item \texttt{type}: идентификатор типа элемента (например, \texttt{input\_field}, \texttt{array\_fields});
+	\item \texttt{props}: набор свойств, необходимых для рендеринга и обработки (имя поля, текст метки, дополнительные параметры).
+\end{itemize}
+
+% Пример схемы
+\begin{lstlisting}[caption=Пример описания схемы формы]
+	export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
+		return [
+		{
+			type: 'input_field',
+			props: {
+				name: 'email',
+				labelText: 'Email'
+			}
+		},
+		{
+			type: 'input_field',
+			props: {
+				type: 'select',
+				name: 'department_id',
+				ownerInputComponent: <DepartmentSelectField />
+			}
+		}
+		];
+	}
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Использование \texttt{FormBuilder}]
+	<FormBuilder
+	schema={inviteTeacherScheme()}
+	onChange={onChangeFormData}
+	/>
+\end{lstlisting}
+
+Компонент \texttt{FormBuilder} автоматически распределяет данные между полями и собирает итоговый объект формы, передавая его через \texttt{onChange}.
+
+\subsubsection{Типы элементов схемы и их поведение}
+Ниже приведены ключевые типы схем, поддерживаемые \texttt{FormBuilder}, и описание их функциональности.
+
+\paragraph{INPUT\_FIELD\_SCHEMA}
+Тип \texttt{input\_field} отвечает за отображение и управление единичным полем ввода.
+\begin{itemize}
+	\item \texttt{name}: ключ в итоговом объекте данных.
+	\item \texttt{labelText}: отображаемая метка поля.
+	\item \texttt{hintText} (опционально): текст подсказки под полем.
+	\item \texttt{type} (опционально): уточняет тип поля (например, \texttt{select}, \texttt{datetime}).
+	\item \texttt{ownerInputComponent} (опционально): пользовательский компонент, принимающий \texttt{value}, \texttt{onChange}, \texttt{isError}, \texttt{onBlur}.
+\end{itemize}
+
+% Пример INPUT_FIELD_SCHEMA
+\begin{lstlisting}[caption={Пример INPUT\_FIELD\_SCHEMA}]
+	const schema: INPUT_FIELD_SCHEMA = {
+		type: 'input_field',
+		props: {
+			name: 'username',
+			labelText: 'Имя пользователя',
+			hintText: 'Введите ваш логин'
+		}
+	};
+\end{lstlisting}
+
+\paragraph{ARRAY\_FIELDS\_SCHEMA}
+Тип \texttt{array\_fields} предназначен для формирования массива однотипных входных полей. Все вложенные \texttt{input\_field} будут собраны в массив.
+\begin{itemize}
+	\item \texttt{name}: имя массива в итоговой модели.
+	\item \texttt{children}: массив схем элементов, входящих в каждую запись.
+\end{itemize}
+
+% Пример ARRAY_FIELDS_SCHEMA
+\begin{lstlisting}[caption={Пример ARRAY\_FIELDS\_SCHEMA}]
+	const schema: ARRAY_FIELDS_SCHEMA = [
+	{
+		type: 'array_fields',
+		props: {
+			name: 'subjects',
+			children: [
+			{
+				type: 'input_field',
+				props: {
+					name: 'subjectName',
+					labelText: 'Название предмета'
+				}
+			}
+			]
+		}
+	}
+	];
+\end{lstlisting}
+
+\paragraph{FORM\_WRAPPER\_SCHEMA}
+Тип \texttt{form\_wrapper} служит для группировки полей без сброса счётчика массивов. Внутренние поля записываются как вложенный объект.
+\begin{itemize}
+	\item \texttt{name}: имя ключа в итоговом объекте.
+	\item \texttt{children}: схема вложенных элементов.
+\end{itemize}
+
+% Пример FORM_WRAPPER_SCHEMA
+\begin{lstlisting}[caption={Пример FORM\_WRAPPER\_SCHEMA}]
+	const schema: FORM_WRAPPER_SCHEMA = [
+	{
+		type: 'form_wrapper',
+		props: {
+			name: 'teacherInfo',
+			children: [
+			{
+				type: 'input_field',
+				props: {
+					name: 'firstName',
+					labelText: 'Имя'
+				}
+			},
+			{
+				type: 'input_field',
+				props: {
+					name: 'lastName',
+					labelText: 'Фамилия'
+				}
+			}
+			]
+		}
+	}
+	];
+\end{lstlisting}
+
+\paragraph{BLOCK\_WRAPPER\_SCHEMA}
+Тип \texttt{block\_wrapper} позволяет визуально группировать элементы без изменения структуры данных: поля в нём обрабатываются как часть текущего массива или объекта.
+
+% Пример BLOCK_WRAPPER_SCHEMA
+\begin{lstlisting}[caption={Пример BLOCK\_WRAPPER\_SCHEMA}]
+	const schema: BLOCK_WRAPPER_SCHEMA = [
+	{
+		type: 'block_wrapper',
+		props: {
+			children: [
+			{
+				type: 'input_field',
+				props: {
+					name: 'code',
+					labelText: 'Код'
+				}
+			}
+			]
+		}
+	}
+	];
+\end{lstlisting}
+
+\paragraph{REACT\_NODE\_SCHEMA}
+Тип \texttt{react\_node} предназначен для вставки произвольного React-элемента в произвольном месте формы.
+\begin{lstlisting}[caption={Пример REACT\_NODE\_SCHEMA}]
+	const schema: REACT_NODE_SCHEMA = [
+	{
+		type: 'react_node',
+		props: {
+			node: <CustomSeparator />
+		}
+	}
+	];
+\end{lstlisting}
+
+\subsubsection{Преимущества и выводы}
+Использование декларативного \texttt{FormBuilder} существенно снижает сложность создания многоуровневых форм:
+\begin{itemize}
+	\item Консистентность API при описании разных типов полей;
+	\item Возможность единообразной валидации и управления ошибками;
+	\item Лёгкость расширения — добавление новых типов полей или обёрток сводится к регистрации нового \texttt{type} и соответствующего рендерера;
+	\item Повышение читаемости кода: структура формы полностью отражена в схеме без дублирования логики в компонентах.
+\end{itemize}
+
+% Конец раздела 3.2

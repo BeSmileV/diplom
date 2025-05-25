@@ -1,0 +1,126 @@
+% Раздел 3.3: Интеграция Auth.js
+\subsection{Интеграция Auth.js}
+Для реализации авторизации в приложении использовалась библиотека Auth.js (ранее известная как NextAuth.js). Данный пакет рекомендован в официальной документации Next.js и обеспечивает гибкую работу с JWT-сессиями, однако требует дополнительной настройки для поддержки типизации, обновления токенов и обработки ошибок.
+
+\subsubsection{Типизация данных сессии}
+Для корректной работы TypeScript необходимо расширить интерфейсы, предоставляемые Auth.js. Пример декларации модулей:
+\begin{lstlisting}[caption={Типизация JWT и Session в Auth.js}]
+	import { AuthJWTErrorType } from "@/features/next-auth/types";
+	
+	export declare module "next-auth/jwt" {
+		interface JWT {
+			access_token?: string;
+			refresh_token?: string;
+			token_type?: string;
+			error?: AuthJWTErrorType;
+		}
+	}
+	
+	export declare module "next-auth" {
+		interface Session {
+			user: {
+				access_token?: string;
+				refresh_token?: string;
+				token_type?: string;
+				error?: AuthJWTErrorType;
+			};
+		}
+		interface User {
+			access_token?: string;
+			refresh_token?: string;
+			token_type?: string;
+		}
+	}
+\end{lstlisting}
+
+\subsubsection{Конфигурация провайдера и функция \texttt{authorize}}
+Основная логика входа пользователя реализуется в методе \texttt{authorize}, где учётные данные передаются на сервер, и в случае успешного ответа возвращается объект пользователя:
+\begin{lstlisting}[caption={Реализация функции authorize}]
+	async authorize(credentials, _req) {
+		if (credentials.username && credentials.password) {
+			const userData = {
+				username: credentials.username as string,
+				password: credentials.password as string,
+			};
+			
+			const authResponse = await login(userData);
+			if (authResponse?.success) {
+				return authResponse.data;
+			} else {
+				throw new InvalidLoginError(
+				`Backend server error: ${JSON.stringify(authResponse?.data)}`
+				);
+			}
+		}
+		throw new InvalidLoginError('Unknown authentication error');
+	}
+\end{lstlisting}
+
+\subsubsection{JWT-callback и обновление токенов}
+Для передачи и обновления JWT в сессии используется callback \texttt{jwt}, принимающий параметр \texttt{trigger}, позволяющий определить сценарий обработки:
+\begin{lstlisting}[caption={JWT-callback с учётом trigger}]
+	async jwt({ token, trigger, user, session }): Promise<JWT> {
+		if (trigger === 'signIn') {
+			return { ...user, error: null };
+		}
+		if (token == null) {
+			return { ...session?.user, error: 'another' } as JWT;
+		}
+		if (trigger === 'update') {
+			return await refreshingProcess(token);
+		}
+		return { ...token, error: null };
+	},
+\end{lstlisting}
+
+Важным аспектом является недопущение состояния гонки при одновременном запросе обновления токена: для этого на клиенте сохраняется единственный промис обновления, который переиспользуется при множественных запросах:
+\begin{lstlisting}[caption={Механизм предотвращения race condition при рефреше токена}]
+	import { JWT } from "next-auth/jwt";
+	
+	export type RefreshPromiseStateType = Promise<JWT | null> | null;
+	let tokenPromiseState: RefreshPromiseStateType = null;
+	
+	export const setTokenPromiseState = (
+	promise: RefreshPromiseStateType
+	): void => {
+		tokenPromiseState = promise;
+	};
+	
+	export const getTokenPromiseState = (): RefreshPromiseStateType => {
+		return tokenPromiseState;
+	};
+	
+	let tokenState: JWT | null = null;
+	export const setTokenState = (newTokenState: JWT | null): void => {
+		tokenState = newTokenState;
+	};
+	export const getTokenState = (): JWT | null => {
+		return tokenState;
+	};
+	
+	let timeoutState: NodeJS.Timeout | null = null;
+\end{lstlisting}
+
+\subsubsection{Проверка сессии в Middleware}
+Для защиты маршрутов на уровне middleware необходимо предварительно проверять наличие валидной сессии и доступность токена:
+\begin{lstlisting}[caption={Пример проверки сессии в Middleware}]
+	const session = (await auth()) as Session | undefined;
+	const tokenPayload = getAccessTokenPayload(
+	session?.user?.access_token
+	);
+	if (
+	session?.user?.access_token &&
+	(isTokenAvailable(session.user.access_token) ||
+	isTokenAvailable(session.user.refresh_token)) &&
+	!session.user.error &&
+	tokenPayload
+	) {
+		// доступ разрешён
+	} else {
+		// перенаправление на страницу входа
+	}
+\end{lstlisting}
+
+Данный подход обеспечивает централизованную обработку авторизации и автоматическое обновление токенов без дублирования логики в разных частях приложения.
+
+% Конец раздела 3.3

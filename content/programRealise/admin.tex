@@ -1,0 +1,126 @@
+% Раздел 3.5: Административная панель университета
+\subsection{Административная панель университета}
+Административная панель университета разделена на несколько секций, каждая из которых отвечает за управление соответствующими данными: институтами, кафедрами, группами, преподавателями и студентами. Также предусмотрён модуль для формирования и отправки приглашений.
+
+\subsubsection{Страница списка с таблицей данных}
+На страницах списка отображается компонент \texttt{Table} с переданной конфигурацией \texttt{header} и \texttt{body}, а также обрабатываются события клика по строкам для навигации к деталям записи:
+\begin{lstlisting}[caption={Компонент страницы списка институтов}]
+export function AdminInstitutePage() {
+    const { data, body, onClickRow, header } = useListAdminInstitute();
+
+    return (
+        <div className={AdminListPageStyle.AdminListPage}>
+            <div className={AdminListPageStyle.table}>
+                <Table
+                    header={header}
+                    body={body}
+                    onClickRow={onClickRow}
+                />
+            </div>
+            <PaginationComponent totalCount={data.total_count} />
+        </div>
+    );
+}
+\end{lstlisting}
+
+\subsubsection{Страница просмотра/редактирования записи}
+На странице детализации отображаются текущие данные и предоставляется возможность их изменения через генератор форм и кнопку сохранения. Также реализована операция удаления записи:
+\begin{lstlisting}[caption={Компонент страницы детализации института}]
+export function AdminInstituteDetailPage({ id }: { id: number }) {
+    const { onUpdate, onDelete, onChangeFormData, data } = useDetailAdminInstitute(id);
+
+    return (
+        <div className={AdminDetailPageStyle.AdminDetailPage}>
+            <div className={AdminDetailPageStyle.content}>
+                <h3 className={AdminDetailPageStyle.header}>
+                   	Данные института
+                </h3>
+                <FormBuilder<InstitutePatchType>
+                    formDataDefault={data}
+                    clearForm={true}
+                    onChange={onChangeFormData}
+                    schema={instituteSchema()}
+                />
+                <Button
+                    size="large"
+                    hierarchy="primary"
+                    text="Сохранить"
+                    width="fill"
+                    onClick={onUpdate}
+                />
+            </div>
+            <div className={AdminDetailPageStyle.action}>
+                <h3 className={AdminDetailPageStyle.header}>
+                   	Операции
+                </h3>
+                <Button
+                    size="small"
+                    hierarchy="primary"
+                    warning={true}
+                    iconLeft={<Trash01SVG />}
+                    text="Удалить"
+                    onClick={onDelete}
+                    width="fill"
+                />
+            </div>
+        </div>
+    );
+}
+\end{lstlisting}
+
+\subsubsection{Страница создания новой записи}
+Компонент создания использует \texttt{FormBuilder} с соответствующей схемой и отправляет форму по событию нажатия кнопки:
+\begin{lstlisting}[caption={Компонент страницы создания института}]
+export function AdminInstituteCreatePage() {
+    const { onChangeFormData, onSend } = useCreateAdminInstitute();
+
+    return (
+        <div className={AdminDetailPageStyle.AdminDetailPage}>
+            <div className={AdminDetailPageStyle.content}>
+                <h1 className={AdminDetailPageStyle.header}>
+                   	Создание института
+                </h1>
+                <FormBuilder<InstitutePostType>
+                    schema={instituteSchema()}
+                    onChange={onChangeFormData}
+                />
+                <Button
+                    onClick={onSend}
+                    text="Создать"
+                    size="large"
+                    width="fill"
+                />
+            </div>
+        </div>
+    );
+}
+\end{lstlisting}
+
+\subsubsection{Модальные виджеты для создания приглашений}
+Для формирования приглашений используются два модальных компонента, управляемые состоянием \texttt{isActiveModalWindow}:
+\begin{lstlisting}[caption={Выбор модального окна приглашения}]
+const getModalWindow = () => {
+    switch (isActiveModalWindow) {
+        case 'teacher':
+            return <CreateTeacherInvites onClose={() => setIsActiveModalWindow(undefined)} />;
+        case 'students':
+            return <CreateStudentsInvites onClose={() => setIsActiveModalWindow(undefined)} />;
+    }
+};
+\end{lstlisting}
+
+Кнопки для вызова модальных окон:
+\begin{lstlisting}[caption={Кнопки вызова модальных приглашений}]
+<ActionField
+    title="Пригласить преподавателя"
+    subtitle="Сформировать ссылку для регистрации преподавателя"
+    onClick={() => setIsActiveModalWindow('teacher')}
+/>
+<ActionField
+    title="Пригласить студентов"
+    subtitle="Сформировать ссылку для регистрации студентов"
+    onClick={() => setIsActiveModalWindow('students')}
+/>
+\end{lstlisting}
+
+% Конец раздела 3.5

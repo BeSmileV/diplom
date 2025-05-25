@@ -1,0 +1,46 @@
+% Раздел 3.4: Модуль «Регистрация и вход"
+\subsection{Модуль «Регистрация и вход»}
+В системе предусмотрены три сценария регистрации: для университета, студентов и преподавателей. В URL-параметрах \texttt{invite\_id} передаются данные приглашения для последующей валидации и передачи на бэкенд.
+
+% Выбор виджета регистрации по типу
+\begin{lstlisting}[caption={Выбор виджета регистрации}]
+const getForm = () => {
+    const type = getSearchParams(REGISTRATION_TYPE_PARAM_NAME) as RegistrationTypesType;
+    const inviteId = getInviteId();
+    switch (type) {
+        case 'teacher':
+            return <RegistrationTeacherWidget inviteId={inviteId} />;
+        case 'student':
+            return <RegistrationStudentWidget inviteId={inviteId} />;
+        case 'university':
+        default:
+            return <RegistrationUniversityWidget />;
+    }
+};
+\end{lstlisting}
+
+Далее \texttt{invite\_id} передаётся в соответствующий виджет, который запрашивает на сервере данные приглашения. В случае неверного или просроченного ID отображается сообщение об ошибке.
+
+% Виджет регистрации преподавателя
+\begin{lstlisting}[caption={RegistrationTeacherWidget}]
+export function RegistrationTeacherWidget({ inviteId }: RegistrationPropsType) {
+    const { initData, onSubmit, isError, setIsError, formDataRef } =
+        useRegistrationStudentAndTeacher<typeof registerTeacher>({
+            inviteId,
+            registrationRequest: registerTeacher
+        });
+
+    if (initData === undefined) {
+        return 'Loading';
+    }
+
+    if (initData === null) {
+        // Неверное приглашение или оно истекло
+        return 'Error';
+    }
+
+	...
+}
+\end{lstlisting}
+
+% Конец раздела 3.4
