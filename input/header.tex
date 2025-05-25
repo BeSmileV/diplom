@@ -152,6 +152,20 @@ postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
 %%% 4) Устанавливаем tscustom по умолчанию
 \lstset{style=tscustom}
 
+%\bibliographystyle{gost-numeric.bbx}
+\usepackage[parentracker=true,
+backend=biber,
+hyperref=false,
+bibencoding=utf8,
+style=numeric-comp,
+language=auto,
+autolang=other,
+citestyle=gost-numeric,
+defernumbers=true,
+bibstyle=gost-numeric,
+sorting=ntvy,
+]{biblatex}
 
+\addbibresource{library.bib}
 
 
