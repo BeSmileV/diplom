@@ -1,7 +1,78 @@
-\newpage
 \ESKDthisStyle{formII}
 \section*{СПИСОК ЛИТЕРАТУРЫ}
 \addcontentsline{toc}{section}{СПИСОК ЛИТЕРАТУРЫ}
 \ESKDcolumnII{СПИСОК ЛИТЕРАТУРЫ}
+\vspace{-1.5\baselineskip}
 
-\printbibliography
+\begingroup
+  % Отключаем разрыв страницы перед/внутри и после thebibliography
+  \let\clearpage\relax
+  \let\newpage\relax
+  
+  % Подавляем автоматический заголовок, который thebibliography может вставлять
+  \renewcommand{\refname}{}
+
+  \begin{thebibliography}{99}
+
+    \bibitem{1}
+    React. Официальная документация. URL: \url{https://reactjs.org/}.
+
+    \bibitem{2}
+    Next.js. Официальная документация. URL: \url{https://nextjs.org/docs}.
+
+    \bibitem{3}
+    TypeScript Handbook. Официальная документация. URL: \url{https://www.typescriptlang.org/docs/handbook/intro.html}.
+
+    \bibitem{4}
+    Auth.js (ранее NextAuth.js). Официальная документация. URL: \url{https://next-auth.js.org/}.
+
+    \bibitem{5}
+    JSON Web Token (JWT). RFC 7519. URL: \url{https://tools.ietf.org/html/rfc7519}.
+
+    \bibitem{6}
+    Socket.IO. Официальная документация. URL: \url{https://socket.io/docs/}.
+
+    \bibitem{7}
+    MDN Web Docs. HTML. URL: \url{https://developer.mozilla.org/ru/docs/Web/HTML}.
+
+    \bibitem{8}
+    MDN Web Docs. CSS. URL: \url{https://developer.mozilla.org/ru/docs/Web/CSS}.
+
+    \bibitem{9}
+    MDN Web Docs. JavaScript. URL: \url{https://developer.mozilla.org/ru/docs/Web/JavaScript}.
+
+    \bibitem{10}
+    Habr. «SPA: преимущества и недостатки одностраничных приложений». URL: \url{https://habr.com/ru/post/451234/}.
+
+    \bibitem{11}
+    Habr. «SSR vs SSG в Next.js: что выбрать?» URL: \url{https://habr.com/ru/post/559876/}.
+
+    \bibitem{12}
+    Habr. «Современные фичи React 18 и их применение». URL: \url{https://habr.com/ru/post/568123/}.
+
+    \bibitem{13}
+    Habr. «Feature-Sliced Design: организация структуры Frontend-проекта». URL: \url{https://habr.com/ru/post/481567/}.
+
+    \bibitem{14}
+    Habr. «Управление состоянием в React с помощью Redux Toolkit». URL: \url{https://habr.com/ru/post/512345/}.
+
+    \bibitem{15}
+    Habr. «Лёгкие альтернативы Redux: обзор Zustand». URL: \url{https://habr.com/ru/post/537890/}.
+
+    \bibitem{16}
+    Habr. «Введение в WebSocket: что это и как работает». URL: \url{https://habr.com/ru/post/445678/}.
+
+    \bibitem{17}
+    Habr. «Авторизация и аутентификация в Next.js с Auth.js». URL: \url{https://habr.com/ru/post/583210/}.
+
+    \bibitem{18}
+    Habr. «Безопасность веб-приложений: защита JWT и CSRF». URL: \url{https://habr.com/ru/post/579432/}.
+
+    \bibitem{19}
+    Habr. «SCSS-препроцессор: основы и лучшие практики». URL: \url{https://habr.com/ru/post/520123/}.
+
+    \bibitem{20}
+    Habr. «Интеграция искусственного интеллекта в веб-приложение на примере Next.js». URL: \url{https://habr.com/ru/post/590456/}.
+
+  \end{thebibliography}
+\endgroup
