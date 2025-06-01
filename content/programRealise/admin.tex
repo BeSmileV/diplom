@@ -1,126 +1,50 @@
-% Раздел 3.5: Административная панель университета
-\subsection{Административная панель университета}
-Административная панель университета разделена на несколько секций, каждая из которых отвечает за управление соответствующими данными: институтами, кафедрами, группами, преподавателями и студентами. Также предусмотрён модуль для формирования и отправки приглашений.
+\subsubsection{Модуль формирования и отправки приглашений}
+В административной панели университета реализован отдельный модуль, который позволяет формировать и отправлять приглашения как для преподавателей, так и для студентов. Этот модуль работает по следующему сценарию:
 
-\subsubsection{Страница списка с таблицей данных}
-На страницах списка отображается компонент \texttt{Table} с переданной конфигурацией \texttt{header} и \texttt{body}, а также обрабатываются события клика по строкам для навигации к деталям записи:
-\begin{lstlisting}[caption={Компонент страницы списка институтов}]
-export function AdminInstitutePage() {
-    const { data, body, onClickRow, header } = useListAdminInstitute();
+\begin{enumerate}
+    \item \textbf{Инициация приглашения:} 
+    \begin{itemize}
+        \item Администратор вводит в UI адрес электронной почты и идентификатор кафедры (для приглашения преподавателя) либо адрес электронной почты и идентификатор группы (для приглашения студента).
+        \item После заполнения необходимых полей администратор нажимает кнопку «Сформировать ссылку».
+    \end{itemize}
+    \item \textbf{Отправка запроса на бэкенд:} 
+    \begin{itemize}
+        \item UI передаёт запрос на бэкенд, например, «Запрос на приглашение преподавателя (требуются: email, department\_id)» или «Запрос на приглашение студента (требуются: email, group\_id)».
+        \item Бэкенд проверяет права администратора и корректность введённых данных, генерирует уникальную ссылку приглашения и возвращает её обратно в UI.
+    \end{itemize}
+    \item \textbf{Получение ответа и отображение ссылки:} 
+    \begin{itemize}
+        \item UI получает от бэкенда объект с полем \texttt{invite\_link}.
+        \item UI отображает администратору уведомление «Приглашение отправлено» и показывает полученную ссылку, которую можно скопировать и отправить по электронной почте.
+    \end{itemize}
+\end{enumerate}
 
-    return (
-        <div className={AdminListPageStyle.AdminListPage}>
-            <div className={AdminListPageStyle.table}>
-                <Table
-                    header={header}
-                    body={body}
-                    onClickRow={onClickRow}
-                />
-            </div>
-            <PaginationComponent totalCount={data.total_count} />
-        </div>
-    );
-}
-\end{lstlisting}
+Ниже на рисунке~\ref{fig:admin-invite} приведена последовательная диаграмма, иллюстрирующая полный процесс формирования и отправки приглашений: в верхней части — сценарий для преподавателя, в нижней части — сценарий для студента.
 
-\subsubsection{Страница просмотра/редактирования записи}
-На странице детализации отображаются текущие данные и предоставляется возможность их изменения через генератор форм и кнопку сохранения. Также реализована операция удаления записи:
-\begin{lstlisting}[caption={Компонент страницы детализации института}]
-export function AdminInstituteDetailPage({ id }: { id: number }) {
-    const { onUpdate, onDelete, onChangeFormData, data } = useDetailAdminInstitute(id);
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{static/diagrams/Admin.png}
+    \caption{Схема процесса формирования и отправки приглашений преподавателям и студентам}
+    \label{fig:admin-invite}
+\end{figure}
 
-    return (
-        <div className={AdminDetailPageStyle.AdminDetailPage}>
-            <div className={AdminDetailPageStyle.content}>
-                <h3 className={AdminDetailPageStyle.header}>
-                   	Данные института
-                </h3>
-                <FormBuilder<InstitutePatchType>
-                    formDataDefault={data}
-                    clearForm={true}
-                    onChange={onChangeFormData}
-                    schema={instituteSchema()}
-                />
-                <Button
-                    size="large"
-                    hierarchy="primary"
-                    text="Сохранить"
-                    width="fill"
-                    onClick={onUpdate}
-                />
-            </div>
-            <div className={AdminDetailPageStyle.action}>
-                <h3 className={AdminDetailPageStyle.header}>
-                   	Операции
-                </h3>
-                <Button
-                    size="small"
-                    hierarchy="primary"
-                    warning={true}
-                    iconLeft={<Trash01SVG />}
-                    text="Удалить"
-                    onClick={onDelete}
-                    width="fill"
-                />
-            </div>
-        </div>
-    );
-}
-\end{lstlisting}
+На рисунке~\ref{fig:admin-invite} можно выделить следующие ключевые этапы:
 
-\subsubsection{Страница создания новой записи}
-Компонент создания использует \texttt{FormBuilder} с соответствующей схемой и отправляет форму по событию нажатия кнопки:
-\begin{lstlisting}[caption={Компонент страницы создания института}]
-export function AdminInstituteCreatePage() {
-    const { onChangeFormData, onSend } = useCreateAdminInstitute();
+\begin{itemize}
+    \item \textbf{Приглашение преподавателя:}
+    \begin{enumerate}
+        \item Администратор вводит в UI email и \texttt{department\_id}.
+        \item UI отправляет запрос на бэкенд «Приглашение преподавателя (требуются: email, department\_id)».
+        \item Бэкенд проверяет данные, создаёт приглашение и возвращает уникальную ссылку (\texttt{invite\_link}).
+        \item UI отображает сообщение «Приглашение отправлено» и показывает \texttt{invite\_link}.
+    \end{enumerate}
+    \item \textbf{Приглашение студента:}
+    \begin{enumerate}
+        \item Администратор вводит в UI email и \texttt{group\_id}.
+        \item UI отправляет запрос на бэкенд «Приглашение студента (требуются: email, group\_id)».
+        \item Бэкенд проверяет данные, создаёт приглашение и возвращает уникальную ссылку (\texttt{invite\_link}).
+        \item UI отображает сообщение «Приглашение отправлено» и показывает \texttt{invite\_link}.
+    \end{enumerate}
+\end{itemize}
 
-    return (
-        <div className={AdminDetailPageStyle.AdminDetailPage}>
-            <div className={AdminDetailPageStyle.content}>
-                <h1 className={AdminDetailPageStyle.header}>
-                   	Создание института
-                </h1>
-                <FormBuilder<InstitutePostType>
-                    schema={instituteSchema()}
-                    onChange={onChangeFormData}
-                />
-                <Button
-                    onClick={onSend}
-                    text="Создать"
-                    size="large"
-                    width="fill"
-                />
-            </div>
-        </div>
-    );
-}
-\end{lstlisting}
-
-\subsubsection{Модальные виджеты для создания приглашений}
-Для формирования приглашений используются два модальных компонента, управляемые состоянием \texttt{isActiveModalWindow}:
-\begin{lstlisting}[caption={Выбор модального окна приглашения}]
-const getModalWindow = () => {
-    switch (isActiveModalWindow) {
-        case 'teacher':
-            return <CreateTeacherInvites onClose={() => setIsActiveModalWindow(undefined)} />;
-        case 'students':
-            return <CreateStudentsInvites onClose={() => setIsActiveModalWindow(undefined)} />;
-    }
-};
-\end{lstlisting}
-
-Кнопки для вызова модальных окон:
-\begin{lstlisting}[caption={Кнопки вызова модальных приглашений}]
-<ActionField
-    title="Пригласить преподавателя"
-    subtitle="Сформировать ссылку для регистрации преподавателя"
-    onClick={() => setIsActiveModalWindow('teacher')}
-/>
-<ActionField
-    title="Пригласить студентов"
-    subtitle="Сформировать ссылку для регистрации студентов"
-    onClick={() => setIsActiveModalWindow('students')}
-/>
-\end{lstlisting}
-
-% Конец раздела 3.5
+Таким образом, схема на рисунке~\ref{fig:admin-invite} демонстрирует единый алгоритм работы модуля: ввод данных в UI → отправка запроса на бэкенд → генерация и возврат уникальной ссылки → отображение ссылки администратору.

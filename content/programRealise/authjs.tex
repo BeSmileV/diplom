@@ -1,95 +1,75 @@
-% Раздел 3.3: Интеграция Auth.js
-\subsection{Интеграция Auth.js}
-Для реализации авторизации в приложении использовалась библиотека Auth.js (ранее известная как NextAuth.js). Данный пакет рекомендован в официальной документации Next.js и обеспечивает гибкую работу с JWT-сессиями, однако требует дополнительной настройки для поддержки типизации, обновления токенов и обработки ошибок.
-
-\subsubsection{Типизация данных сессии}
-Для корректной работы TypeScript необходимо расширить интерфейсы, предоставляемые Auth.js. Пример декларации модулей:
-\begin{lstlisting}[caption={Типизация JWT и Session в Auth.js}]
-	import { AuthJWTErrorType } from "@/features/next-auth/types";
-	
-	export declare module "next-auth/jwt" {
-		interface JWT {
-			access_token?: string;
-			refresh_token?: string;
-			token_type?: string;
-			error?: AuthJWTErrorType;
-		}
-	}
-	
-	export declare module "next-auth" {
-		interface Session {
-			user: {
-				access_token?: string;
-				refresh_token?: string;
-				token_type?: string;
-				error?: AuthJWTErrorType;
-			};
-		}
-		interface User {
-			access_token?: string;
-			refresh_token?: string;
-			token_type?: string;
-		}
-	}
-\end{lstlisting}
-
-\subsubsection{Конфигурация провайдера и функция \texttt{authorize}}
-Основная логика входа пользователя реализуется в методе \texttt{authorize}, где учётные данные передаются на сервер, и в случае успешного ответа возвращается объект пользователя:
-\begin{lstlisting}[caption={Реализация функции authorize}]
-	async authorize(credentials, _req) {
-		if (credentials.username && credentials.password) {
-			const userData = {
-				username: credentials.username as string,
-				password: credentials.password as string,
-			};
-			
-			const authResponse = await login(userData);
-			if (authResponse?.success) {
-				return authResponse.data;
-			} else {
-				throw new InvalidLoginError(
-				`Backend server error: ${JSON.stringify(authResponse?.data)}`
-				);
-			}
-		}
-		throw new InvalidLoginError('Unknown authentication error');
-	}
-\end{lstlisting}
-
 \subsubsection{JWT-callback и обновление токенов}
-Для передачи и обновления JWT в сессии используется callback \texttt{jwt}, принимающий параметр \texttt{trigger}, позволяющий определить сценарий обработки:
+Для передачи и обновления JWT в сессии используется callback \texttt{jwt}, принимающий параметр \texttt{trigger}, позволяющий определить сценарий обработки. Логика работы примерно следующая: при первом входе пользователя (\texttt{trigger = signIn}) в токен записываются поля \texttt{access\_token}, \texttt{refresh\_token} и прочие метаданные; при последующих запросах проверяется срок жизни \texttt{access\_token}, и при необходимости инициируется процесс его обновления (\texttt{trigger = update}). Если же токен ещё валиден, возвращается неизменённая структура. Пример реализации:
+
 \begin{lstlisting}[caption={JWT-callback с учётом trigger}]
 	async jwt({ token, trigger, user, session }): Promise<JWT> {
+		// Срабатывает при первичной аутентификации (signIn)
 		if (trigger === 'signIn') {
 			return { ...user, error: null };
 		}
+		// Если токена ещё нет (например, при восстановлении сессии из куки)
 		if (token == null) {
 			return { ...session?.user, error: 'another' } as JWT;
 		}
+		// При запросе обновления (trigger = 'update')
 		if (trigger === 'update') {
 			return await refreshingProcess(token);
 		}
+		// Во всех остальных случаях (токен валиден), возвращаем прежнее состояние
 		return { ...token, error: null };
 	},
 \end{lstlisting}
 
-Важным аспектом является недопущение состояния гонки при одновременном запросе обновления токена: для этого на клиенте сохраняется единственный промис обновления, который переиспользуется при множественных запросах:
+Ниже на рисунке~\ref{fig:auth-refresh} показана вся последовательная диаграмма, иллюстрирующая проверку срока жизни JWT на клиенте и, при необходимости, получение нового токена по refresh-токену. Эта схема помогает понять, как именно Auth.js (или NextAuth.js) взаимодействует с бэкендом для устойчивого хранения и своевременного обновления токенов без лишних повторных запросов.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{static/diagrams/AuthRefresh.png}
+    \caption{Схема процесса проверки и обновления JWT через refresh-токен}
+    \label{fig:auth-refresh}
+\end{figure}
+
+На рисунке~\ref{fig:auth-refresh} можно выделить два основных этапа:
+
+\begin{enumerate}
+    \item \textbf{Первичный вход (sign\-In):} 
+    \begin{itemize}
+        \item Пользователь вводит \texttt{username} и \texttt{password} в приложение.
+        \item Auth.js формирует объект с учётными данными и отправляет запрос на бэкенд (метод \texttt{login}).
+        \item Бэкенд возвращает пару токенов: \texttt{access\_token} и \texttt{refresh\_token}.
+        \item Auth.js сохраняет полученный JWT в защищённую cookie (или в хранилище клиента).
+    \end{itemize}
+    \item \textbf{Проверка срока жизни и refresh:}
+    \begin{itemize}
+        \item При каждом запросе клиент проверяет поле \texttt{exp} (срок жизни) в \texttt{access\_token}.
+        \item Если текущий момент времени превысил \texttt{exp(access\_token)}, начинается подготовка к рефрешу.
+        \item В блоке \texttt{alt} (альтернативный сценарий) на диаграмме показано, что в случае истёкшего access-токена:
+        \begin{itemize}
+            \item Auth.js собирает объект с \texttt{refresh\_token}.
+            \item Отправляется запрос «Refresh» на бэкенд, передаётся \texttt{refresh\_token}.
+            \item Бэкенд возвращает новый \texttt{access\_token} (и, при необходимости, обновлённый \texttt{refresh\_token}).
+            \item Auth.js заменяет старый JWT в cookie на новый.
+        \end{itemize}
+        \item Если же \texttt{access\_token} ещё валиден, Auth.js просто использует существующий токен и не делает дополнительных запросов (промежуточные уведомления внизу диаграммы).
+    \end{itemize}
+\end{enumerate}
+
+Таким образом, схема на рисунке~\ref{fig:auth-refresh} демонстрирует, что клиент всегда сначала пробует воспользоваться существующим \texttt{access\_token}, проверяя его валидность. Только если проверка не проходит, выполняется последовательность обновления, благодаря чему повышается отказоустойчивость и исключается ситуация «гонки» при параллельных запросах на обновление.
+
+Важным дополнением к этой концепции является механизм предотвращения race condition при одновременном запросе нескольких API-методов, обнаруживающих, что access-токен просрочен. В таких случаях на клиенте сохраняется единственный промис обновления, который переиспользуется всеми последующими запросами до получения ответа от бэкенда. Пример реализации этого механизма приведён ниже:
+
 \begin{lstlisting}[caption={Механизм предотвращения race condition при рефреше токена}]
-	import { JWT } from "next-auth/jwt";
-	
 	export type RefreshPromiseStateType = Promise<JWT | null> | null;
 	let tokenPromiseState: RefreshPromiseStateType = null;
-	
 	export const setTokenPromiseState = (
-	promise: RefreshPromiseStateType
+		promise: RefreshPromiseStateType
 	): void => {
 		tokenPromiseState = promise;
 	};
-	
 	export const getTokenPromiseState = (): RefreshPromiseStateType => {
 		return tokenPromiseState;
 	};
-	
+
 	let tokenState: JWT | null = null;
 	export const setTokenState = (newTokenState: JWT | null): void => {
 		tokenState = newTokenState;
@@ -97,30 +77,8 @@
 	export const getTokenState = (): JWT | null => {
 		return tokenState;
 	};
-	
+
 	let timeoutState: NodeJS.Timeout | null = null;
 \end{lstlisting}
 
-\subsubsection{Проверка сессии в Middleware}
-Для защиты маршрутов на уровне middleware необходимо предварительно проверять наличие валидной сессии и доступность токена:
-\begin{lstlisting}[caption={Пример проверки сессии в Middleware}]
-	const session = (await auth()) as Session | undefined;
-	const tokenPayload = getAccessTokenPayload(
-	session?.user?.access_token
-	);
-	if (
-	session?.user?.access_token &&
-	(isTokenAvailable(session.user.access_token) ||
-	isTokenAvailable(session.user.refresh_token)) &&
-	!session.user.error &&
-	tokenPayload
-	) {
-		// доступ разрешён
-	} else {
-		// перенаправление на страницу входа
-	}
-\end{lstlisting}
-
-Данный подход обеспечивает централизованную обработку авторизации и автоматическое обновление токенов без дублирования логики в разных частях приложения.
-
-% Конец раздела 3.3
+На основе приведённой логики обеспечивается централизованная обработка авторизации и обновления токенов без дублирования кода в разных частях приложения. Кроме того, использование одной общей очереди запросов к API для обновления \texttt{access\_token} предотвращает нежелательные состояния гонки и лишние лишние обращения к бэкенду.

@@ -1,129 +1,67 @@
-% Раздел 3.6: Модуль «Classrooms» (Виртуальные классы)
-\subsection{Модуль «Classrooms» (Виртуальные классы)}
-Модуль «Classrooms» обеспечивает полноценное управление виртуальными классами на клиенте, включая:
-\begin{itemize}
-  \item загрузку и отображение списка классов с поддержкой пагинации,
-  \item получение детальных данных класса и связанных заданий,
-  \item создание нового класса и перенаправление на его страницу,
-  \item интеграцию с AI-сервисом для анализа кода лабораторных работ.
-\end{itemize}
-Бизнес-логика модуля реализована ортогонально к UI через кастомные React-хуки. Ниже приведены их реализации без лишних импортов, с подробным описанием каждого шага.
+\subsubsection{Последовательная диаграмма работы модуля Classrooms}
+Ниже приведена последовательная диаграмма, иллюстрирующая полный жизненный цикл взаимодействия преподавателя, студента, UI, бэкенда и AI-сервиса при работе с виртуальными классами и заданиями. На рисунке~\ref{fig:classroom-flow} показаны все основные этапы: создание класса, создание задания с указанием промта для автопроверки, получение списков заданий студентом, отправка решения студентом, автоматическая проверка через AI и выставление оценки преподавателем.
 
-\subsubsection{Хук \texttt{useClassrooms}}
-Хук отвечает за загрузку списка классов и обработку параметров пагинации из строки URL. Он:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{static/diagrams/Classroom.png}
+    \caption{Схема взаимодействия преподавателя, студента, UI, бэкенда и AI при работе с виртуальными классами}
+    \label{fig:classroom-flow}
+\end{figure}
+
+На рисунке~\ref{fig:classroom-flow} можно выделить следующие ключевые этапы:
+
 \begin{enumerate}
-  \item Читает \texttt{skip} и \texttt{limit} через слушатель URL-параметров;
-  \item Вызывает API-функцию \texttt{getClassroomsList} с этими параметрами;
-  \item Сохраняет результат запроса во внутреннее состояние \texttt{list} и возвращает его для UI;
-  \item Управляет состоянием загрузки и ошибок (не показано на этом уровне, так как хук возвращает только данные).
+    \item \textbf{Преподаватель создаёт класс:}
+    \begin{itemize}
+        \item Преподаватель открывает форму создания класса в своем интерфейсе (UI: Преподаватель).
+        \item UI отправляет запрос на бэкенд с данными нового класса.
+        \item Бэкенд возвращает подтверждение успешного создания (например, ID нового класса).
+        \item UI отображает преподавателю сообщение «Класс создан».
+    \end{itemize}
+
+    \item \textbf{Преподаватель создаёт задание с возможностью задать промт для AI-проверки:}
+    \begin{itemize}
+        \item Преподаватель переходит в форму создания задания, указывая вместе с условием текста задания промт для AI-проверки.
+        \item UI отправляет запрос на бэкенд с данными задания и промтом.
+        \item Бэкенд возвращает подтверждение успешного сохранения задания.
+        \item UI отображает преподавателю сообщение «Задание создано».
+    \end{itemize}
+
+    \item \textbf{Студент получает список доступных заданий:}
+    \begin{itemize}
+        \item Студент открывает интерфейс (UI: Студент) и запрашивает список заданий для конкретного класса.
+        \item UI отправляет запрос на бэкенд с ID класса.
+        \item Бэкенд возвращает массив доступных заданий.
+        \item UI отображает студенту список заданий.
+    \end{itemize}
+
+    \item \textbf{Студент отправляет решение на проверку:}
+    \begin{itemize}
+        \item Студент открывает форму отправки решения, выбирая конкретное задание.
+        \item UI отправляет файлы решения и метаданные (например, ID задания, ID студента) на бэкенд.
+        \item Бэкенд возвращает подтверждение успешной загрузки решения.
+        \item UI отображает студенту сообщение «Решение отправлено».
+    \end{itemize}
+
+    \item \textbf{Автопроверка через AI:}
+    \begin{itemize}
+        \item Бэкенд получает файлы решения и ранее заданный промт к заданию.
+        \item Бэкенд отправляет файлы и промт во внешний AI-сервис.
+        \item AI-сервис выполняет анализ кода (например, проверку корректности, стилевых нарушений и т. д.) и возвращает результат вместе с комментариями.
+        \item Бэкенд сохраняет результат автопроверки и передаёт его UI обоим ролям:
+        \begin{itemize}
+            \item UI Студента: отображается результат автопроверки (оценка AI, комментарии).
+            \item UI Преподавателя: отображается результат автопроверки (для последующей ручной проверки и выставления итоговой оценки).
+        \end{itemize}
+    \end{itemize}
+
+    \item \textbf{Преподаватель ставит оценку, и студент получает её:}
+    \begin{itemize}
+        \item Преподаватель открывает форму выставления оценки (UI: Преподаватель) для конкретного решения.
+        \item UI отправляет в бэкенд оценку и комментарий преподавателя.
+        \item Бэкенд сохраняет оценку, возвращает подтверждение сохранения.
+        \item UI отображает преподавателю сообщение «Оценка сохранена», а UI Студента — обновлённую финальную оценку.
+    \end{itemize}
 \end{enumerate}
-\begin{lstlisting}[caption={Кастомный хук useClassrooms}, label={lst:useClassrooms}]
-export function useClassrooms() {
-    const [list, setList] = useState<ClassroomListType | undefined | null>(undefined);
-    const { getSearchParams } = useSearchParamsListener();
 
-    useEffect(() => {
-        const limit = Number(getSearchParams(LIMIT_SEARCH_PARAM_NAME) || LIMIT_SEARCH_PARAM_DEFAULT);
-        const skip = Number(getSearchParams(SKIP_SEARCH_PARAM_NAME) || SKIP_SEARCH_PARAM_DEFAULT);
-        getClassroomsList({ skip, limit }).then(setList);
-    }, [
-        getSearchParams(LIMIT_SEARCH_PARAM_NAME),
-        getSearchParams(SKIP_SEARCH_PARAM_NAME)
-    ]);
-
-    return { list };
-}
-\end{lstlisting}
-
-Этот хук позволяет любому компоненту, вызывающему его, получить актуальный список классов без дублирования логики запроса и парсинга параметров.
-
-\subsubsection{Хук \texttt{useClassroomDetail}}
-Хук инкапсулирует две независимые операции:
-\begin{itemize}
-  \item получение детальной информации о классе по его идентификатору \texttt{id};
-  \item загрузку списка заданий, привязанных к данному классу, также с пагинацией.
-\end{itemize}
-Он инициирует оба запроса одновременно и возвращает два состояния: \texttt{classroom} и \texttt{list} (массив заданий).
-\begin{lstlisting}[caption={Кастомный хук useClassroomDetail}, label={lst:useClassroomDetail}]
-export function useClassroomDetail(id: number) {
-    const [classroom, setClassroom] = useState<ClassroomDetailType | undefined | null>(undefined);
-    const [list, setList] = useState<TaskListType | undefined | null>(undefined);
-    const { getSearchParams } = useSearchParamsListener();
-
-    useEffect(() => {
-        const limit = Number(getSearchParams(LIMIT_SEARCH_PARAM_NAME) || LIMIT_SEARCH_PARAM_DEFAULT);
-        const skip = Number(getSearchParams(SKIP_SEARCH_PARAM_NAME) || SKIP_SEARCH_PARAM_DEFAULT);
-
-        getClassroomDetail(id).then(setClassroom);
-        getTasksList({ classroomId: id, skip, limit }).then(setList);
-    }, [
-        id,
-        getSearchParams(LIMIT_SEARCH_PARAM_NAME),
-        getSearchParams(SKIP_SEARCH_PARAM_NAME)
-    ]);
-
-    return { classroom, list };
-}
-\end{lstlisting}
-
-Таким образом, компонент, использующий этот хук, получает и данные по самому классу, и список заданий для отображения в UI, не заботясь о деталях запросов.
-
-\subsubsection{Хук \texttt{useClassroomCreate}}
-Хук управляет процессом создания нового класса:
-\begin{enumerate}
-  \item Хранит ссылку на объект формы \texttt{formDataRef} через \texttt{useRef};
-  \item Обрабатывает коллбэк \texttt{onChangeFormData}, обновляя \texttt{formDataRef.current};
-  \item При вызове \texttt{onSubmit} отправляет текущие данные на сервер и, в случае успеха, перенаправляет пользователя на страницу нового класса.
-\end{enumerate}
-\begin{lstlisting}[caption={Кастомный хук useClassroomCreate}, label={lst:useClassroomCreate}]
-export function useClassroomCreate() {
-    const router = useRouter();
-    const formDataRef = useRef<ClassroomPostType>();
-
-    const onChangeFormData = (newFormData: ClassroomPostType) => {
-        formDataRef.current = newFormData;
-    };
-
-    const onSubmit = async () => {
-        if (!formDataRef.current) return;
-        const response = await postClassroom(formDataRef.current);
-        if (response !== null) {
-            router.replace(ROUTES_CONFIG.CLASSROOMS_DETAIL_SLUG_PAGE + response);
-        }
-    };
-
-    return { onChangeFormData, onSubmit };
-}
-\end{lstlisting}
-
-Хук минимизирует код в компонентах: весь процесс подготовки, валидации и навигации после создания вынесен внутрь.
-
-\subsubsection{Хук \texttt{useLabAnalysis}}
-Хук для интеграции AI-анализа кода лабораторных работ:
-\begin{itemize}
-  \item Хранит объект \texttt{formData} и предоставляет \texttt{setFormData} для передачи данных (код или файл) из компонента;
-  \item При вызове метода \texttt{analyze} отправляет \texttt{formData} на API (функция \texttt{postAnalyzeCode});
-  \item Сохраняет результат в \texttt{result} и ошибку в \texttt{error}.
-\end{itemize}
-\begin{lstlisting}[caption={Кастомный хук useLabAnalysis}, label={lst:useLabAnalysis}]
-export function useLabAnalysis() {
-    const [formData, setFormData] = useState<FormData | null>(null);
-    const [result, setResult] = useState<any>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    const analyze = async () => {
-        if (!formData) return;
-        try {
-            const res = await postAnalyzeCode(formData);
-            if (res.ok) setResult(res.data);
-            else setError(res.error_message || 'Ошибка анализа');
-        } catch {
-            setError('Сетевая ошибка анализа');
-        }
-    };
-
-    return { formData, setFormData, result, error, analyze };
-}
-\end{lstlisting}
-
-% Конец раздела 3.6
+Таким образом, последовательная диаграмма на рисунке~\ref{fig:classroom-flow} демонстрирует весь цикл взаимодействий: от создания класса и задания преподавателем до получения студентом финальной оценки после автопроверки и ручного выставления оценки преподавателем.

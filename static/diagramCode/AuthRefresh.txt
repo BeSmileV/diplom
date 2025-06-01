@@ -1,0 +1,36 @@
+@startuml
+actor Пользователь as User
+participant "Сервер (Next.js/AuthJS)" as Client
+participant "Backend" as Backend
+
+== Шаг 1: Отправка логина/parоля в AuthJS ==
+User-> Client : Ввести username, password и нажать «Войти»
+activate Client
+Client -> Client : AuthJS: собрать { username, password }
+Client -> Backend : Запрос «Login» { username, password }
+activate Backend
+
+Backend --> Client : Ответ JWT
+deactivate Backend
+
+Client -> User: AuthJS: положить JWT в защищённую cookie
+deactivate Client
+
+== Шаг 2: Проверка срока жизни JWT (refresh) ==
+note over Client: При каждом запросе клиент проверяет exp в JWT
+Client -> Client : Если сейчас > exp(access_token)\n—> готовится к рефрешу
+
+alt access_token истёк
+    Client -> Client : AuthJS: собрать { refresh_token }
+    Client -> Backend : Запрос «Refresh» { refresh_token }
+    activate Backend
+
+    Backend --> Client : Ответ { новый JWT }
+    deactivate Backend
+
+    Client -> User : AuthJS: заменить JWT в cookie
+else access_token ещё валиден
+    note over Client: Использует существующий JWT, ничего не делает
+end
+
+@enduml

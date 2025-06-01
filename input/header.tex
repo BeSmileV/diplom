@@ -75,19 +75,19 @@
 }
 
 % 3) сохраняем оригинальную команду
-\let\origsubsubsection\subsubsection
-
-% 4) переопределяем логику
-\renewcommand{\subsubsection}[1]{%
-	\stepcounter{subsubsectcount}%
-	\ifnum\value{subsubsectcount}>6
-	% после 5-й — звёздочная версия (без номера и без ToC)
-	\origsubsubsection*{#1}%
-	\else
-	% первые 5 — как обычно
-	\origsubsubsection{#1}%
-	\fi
-}
+%\let\origsubsubsection\subsubsection
+%
+%% 4) переопределяем логику
+%\renewcommand{\subsubsection}[1]{%
+%	\stepcounter{subsubsectcount}%
+%	\ifnum\value{subsubsectcount}>6
+%	% после 5-й — звёздочная версия (без номера и без ToC)
+%	\origsubsubsection*{#1}%
+%	\else
+%	% первые 5 — как обычно
+%	\origsubsubsection{#1}%
+%	\fi
+%}
 %%% ====================================
 
 %%% 1) Подключаем пакеты (у вас уже есть)
@@ -168,4 +168,4 @@ sorting=ntvy,
 
 \addbibresource{library.bib}
 
-
+\usepackage{subcaption}

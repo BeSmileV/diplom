@@ -1,0 +1,100 @@
+@startuml
+actor Пользователь
+participant "UI: Боковая панель" as UI_SidePanel
+participant "UI: Чат" as UI_Chat
+participant "AuthJS/Next.js" as AuthJS
+participant "Backend" as Backend
+participant "WebSocket" as WS
+
+== Открытие приложения ==
+Пользователь -> UI_SidePanel : Открыть страницу чатов
+activate UI_SidePanel
+UI_SidePanel -> UI_SidePanel : Отобразить список чатов (из кэша или HTTP)
+deactivate UI_SidePanel
+
+Пользователь -> UI_Chat : Открыть страницу чатов
+activate UI_Chat
+UI_Chat -> AuthJS : Взять access_token из cookie
+activate AuthJS
+AuthJS --> UI_Chat : Вернуть access_token
+deactivate AuthJS
+UI_Chat -> WS : Установить WebSocket-соединение с JWT { access_token }
+activate WS
+WS --> UI_Chat : Подтверждение подключения
+deactivate WS
+deactivate UI_Chat
+
+== Выбор чата в боковой панели ==
+Пользователь -> UI_SidePanel : Клик по чату (chatId)
+activate UI_SidePanel
+UI_SidePanel -> UI_Chat : Передать chatId
+deactivate UI_SidePanel
+
+UI_Chat -> Backend : HTTP GET /chats/{chatId}/messages?page=1
+activate Backend
+Backend --> UI_Chat : Список сообщений (первая страница)
+deactivate Backend
+UI_Chat -> UI_Chat : Отобразить полученные сообщения
+deactivate UI_Chat
+
+== Отправка нового сообщения ==
+Пользователь -> UI_Chat : Ввести текст и нажать «Отправить»
+activate UI_Chat
+UI_Chat -> WS : Отправить событие send_message { chat, message }
+activate WS
+WS --> UI_Chat : Подтверждение приёма
+deactivate WS
+UI_Chat -> UI_Chat : Добавить временное сообщение в чат
+deactivate UI_Chat
+
+== Получение нового сообщения (new_message) ==
+WS --> UI_Chat : Событие new_message { chat, message }
+activate UI_Chat
+UI_Chat -> UI_Chat : Добавить message в конец списка сообщений
+UI_Chat -> UI_SidePanel : Передать chat для обновления списка чатов
+activate UI_SidePanel
+UI_SidePanel -> UI_SidePanel : Обновить отображение чатов
+deactivate UI_SidePanel
+deactivate UI_Chat
+
+== Редактирование сообщения (edit_message) ==
+WS --> UI_Chat : Событие edit_message { chat, message }
+activate UI_Chat
+UI_Chat -> UI_Chat : Найти message по ID и обновить её
+UI_Chat -> UI_SidePanel : Передать chat для обновления списка чатов
+activate UI_SidePanel
+UI_SidePanel -> UI_SidePanel : Обновить отображение чатов
+deactivate UI_SidePanel
+deactivate UI_Chat
+
+== Отметка сообщения как прочитанного (read_message) ==
+WS --> UI_Chat : Событие read_message { chat, message }
+activate UI_Chat
+UI_Chat -> UI_Chat : Обновить статус message на «прочитано»
+UI_Chat -> UI_SidePanel : Передать chat для обновления списка чатов
+activate UI_SidePanel
+UI_SidePanel -> UI_SidePanel : Обновить отображение чатов
+deactivate UI_SidePanel
+deactivate UI_Chat
+
+== Обработка истечения JWT и переподключение ==
+note over UI_Chat : При ошибке авторизации WebSocket
+activate UI_Chat
+UI_Chat -> AuthJS : Проверить exp(access_token)
+activate AuthJS
+AuthJS --> UI_Chat : access_token истёк
+deactivate AuthJS
+UI_Chat -> AuthJS : Отправить refresh_token
+activate AuthJS
+AuthJS -> Backend : Запрос обновления токена { refresh_token }
+activate Backend
+Backend --> AuthJS : Вернуть новый access_token
+deactivate Backend
+AuthJS --> UI_Chat : Вернуть новый access_token
+deactivate AuthJS
+UI_Chat -> WS : Переподключиться WebSocket с новым JWT { access_token }
+activate WS
+WS --> UI_Chat : Подтверждение нового подключения
+deactivate WS
+deactivate UI_Chat
+@enduml

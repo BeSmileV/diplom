@@ -1,152 +1,71 @@
-% Раздел 3.7: Модуль «Chats» (Чаты)
-\subsection{Модуль «Chats» (Чаты)}
-Модуль «Chats» предназначен для организации обмена сообщениями в режиме реального времени между участниками системы (преподавателями и студентами). Ключевой технологией является библиотека Socket.IO, обеспечивающая надёжное WebSocket-соединение с возможностью автоматического восстановления. Вся бизнес-логика работы с соединением, событиями и состоянием сообщений инкапсулирована в отдельных функциях и хуках — это позволяет UI-компонентам оставаться «тонкими» и фокусироваться только на отображении.
+\subsubsection{Последовательная диаграмма работы модуля Chats}
+Модуль «Chats» обеспечивает обмен сообщениями в реальном времени между пользователями системы (преподавателями и студентами) посредством WebSocket-соединения. Ниже на рисунке~\ref{fig:chats-flow} приведена последовательная диаграмма, демонстрирующая ключевые этапы работы чата: открытие приложения, выбор беседы, отправка и приём сообщений, а также обработку истечения JWT и повторное подключение.
 
-В этом подразделе приведены основные элементы модуля «Chats»:
-\begin{itemize}
-  \item хук \texttt{useSocket} для управления жизненным циклом WebSocket-соединения;
-  \item компаратор \texttt{messagesComp} и функция \texttt{mergeMessages} для аккуратного упорядочивания и объединения потоков сообщений;
-  \item функция \texttt{addMessages} для ввода свежих и локально отправленных сообщений в общее состояние;
-  \item функция \texttt{sendMessage}, реализующая стратегию optimistic UI и синхронизацию с сервером;
-  \item компонент \texttt{ScrollProvider} для двусторонней (вперёд и назад) пагинации сообщений.
-\end{itemize}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{static/diagrams/Chats.png}
+    \caption{Схема взаимодействия клиента (UI: Боковая панель и UI: Чат), AuthJS (Next.js), бэкенда и WebSocket при работе модуля «Chats».}
+    \label{fig:chats-flow}
+\end{figure}
 
-\subsubsection{Хук \texttt{useSocket}}
-Хук \texttt{useSocket} реализует следующие задачи:
+На рисунке~\ref{fig:chats-flow} выделены следующие этапы:
+
 \begin{enumerate}
-  \item Аутентификация через JWT: периодическое обновление токена доступа и передача его в заголовках при установке соединения;
-  \item Установка соединения с сервером по Socket.IO, включая указание URL, пользовательских заголовков и пути для WebSocket-подключения;
-  \item Подписка на базовые события \texttt{connect}, \texttt{disconnect}, \texttt{connect\_error} для управления флагом \texttt{isConnected};
-  \item Динамическая регистрация пользовательских обработчиков событий через параметр \texttt{onEvents};
-  \item Предоставление методов \texttt{emit}, \texttt{disconnect}, \texttt{reconnect}, \texttt{connect} для внешнего управления соединением.
+    \item \textbf{Открытие приложения:}
+    \begin{itemize}
+        \item Пользователь переходит в раздел «Чаты». UI боковой панели запрашивает и отображает список доступных бесед (из кэша или по HTTP).
+        \item При загрузке страницы «Чат» UI извлекает \texttt{access\_token} из защищённой cookie (AuthJS).
+        \item После получения токена устанавливается WebSocket-соединение с сервером, передавая JWT в заголовке. Бэкенд подтверждает подключение.
+    \end{itemize}
+
+    \item \textbf{Выбор чата в боковой панели:}
+    \begin{itemize}
+        \item Пользователь кликает на одну из бесед (параметр \texttt{chatId}). Боковая панель передаёт этот \texttt{chatId} компоненту «Чат».
+        \item UI «Чат» выполняет HTTP GET-запрос к эндпоинту \texttt{/chats/\{chatId\}/messages?page=1} для получения первой страницы сообщений.
+        \item Бэкенд возвращает список сообщений, которые UI отображает в области истории сообщений.
+    \end{itemize}
+
+    \item \textbf{Отправка нового сообщения:}
+    \begin{itemize}
+        \item Пользователь пишет текст сообщения и нажимает «Отправить» в UI «Чат».
+        \item UI «Чат» эмиттит событие \texttt{send\_message} по WebSocket, передавая объект \{\texttt{chat: chatId, message: {…}}\}.
+        \item Бэкенд принимает событие, сохраняет сообщение и возвращает подтверждение приёма.
+        \item UI «Чат» временно отображает отправленное сообщение (optimistic UI) со статусом “отправляется” до получения фактического сообщения от сервера.
+    \end{itemize}
+
+    \item \textbf{Получение нового сообщения (\texttt{new\_message}):}
+    \begin{itemize}
+        \item Когда любой участник (в том числе другой пользователь) отправляет сообщение, сервер по WebSocket рассылает событие \texttt{new\_message} всем подписанным участникам данного чата.
+        \item UI «Чат» получает событие \texttt{new\_message \{ chat, message \}} и добавляет новое сообщение в конец списка истории.
+        \item Боковая панель получает обновлённый \texttt{chatId} для обновления списка бесед (например, переставить текущую беседу наверх) и отображает актуальный список чатов с учётом новых сообщений.
+    \end{itemize}
+
+    \item \textbf{Редактирование сообщения (\texttt{edit\_message}):}
+    \begin{itemize}
+        \item Если пользователь (автор сообщения) редактирует ранее отправленное сообщение, UI «Чат» отправляет серверу по WebSocket событие \texttt{edit\_message \{ chat, message \}}.
+        \item Сервер обновляет текст сообщения и рассылает событие \texttt{edit\_message} всем участникам беседы.
+        \item UI «Чат» находит сообщение по его \texttt{id} или \texttt{local\_id} и обновляет текст.
+        \item После этого боковая панель получает сигнал «передать chatId» для обновления порядка бесед и отображает обновлённый список чатов.
+    \end{itemize}
+
+    \item \textbf{Отметка сообщения как прочитанного (\texttt{read\_message}):}
+    \begin{itemize}
+        \item Когда пользователь прокручивает историю и дожидается видимости новых сообщений, UI «Чат» отправляет событие \texttt{read\_message \{ chat, message \}} по WebSocket.
+        \item Сервер обновляет статус сообщения на «прочитано» и уведомляет других участников через событие \texttt{read\_message}.
+        \item UI «Чат» и боковая панель получают это событие, обновляют статус соответствующего сообщения и обновляют отображение списка чатов (например, убрать бейдж «новых сообщений»).
+    \end{itemize}
+
+    \item \textbf{Обработка истечения JWT и переподключение:}
+    \begin{itemize}
+        \item Если при работе WebSocket возникает ошибка авторизации (например, \texttt{access\_token} истёк), UI «Чат» получает событие \texttt{connect\_error} от библиотеки Socket.IO.
+        \item Компонент проверяет поле \texttt{exp(access\_token)} локально. При истечении:
+        \begin{enumerate}
+            \item UI «Чат» отправляет \texttt{refresh\_token} на AuthJS/Next.js, получая новый \texttt{access\_token}.
+            \item После получения нового токена выполняется повторное подключение WebSocket, передавая обновлённый JWT.
+            \item Сервер WebSocket подтверждает новый сеанс подключения.
+        \end{enumerate}
+        \item Боковая панель и UI «Чат» возобновляют подписку на события и продолжают обмен сообщениями без потери данных.
+    \end{itemize}
 \end{enumerate}
 
-Процесс работы хука выглядит следующим образом:
-\begin{itemize}
-  \item При монтировании компонента запускается эффект для получения сессии пользователя посредством функции \texttt{getClientSession}. Результат (JWT-токен) сохраняется в локальном состоянии и автоматически обновляется через заданный таймаут \texttt{TOKEN\_UPDATE\_TIMEOUT}. Это позволяет избежать простоя соединения из-за истёкшего токена и гарантирует, что при переподключении будет использован свежий токен авторизации.
-  \item Второй эффект отвечает за само подключение к Socket.IO. Он создаёт новый экземпляр \texttt{io(url, options)}, где в \texttt{options.extraHeaders} передаётся поле \texttt{Authorization}. Затем регистрируются «родные» события соединения и пользовательские события, переданные через проп \texttt{onEvents}. После этого ссылка на сокет сохраняется в рефе \texttt{socketRef}. Возврат функции очистки гарантирует, что при размонтировании или изменении зависимостей соединение будет корректно разорвано.
-  \item Метод \texttt{emit} инкапсулирует вызов \texttt{socket.emit}, проверяя предварительно существование объекта сокета. Методы \texttt{disconnect}, \texttt{reconnect} и \texttt{connect} позволяют при необходимости вручную управлять соединением, например, при смене URL или после обработки ошибки.
-\end{itemize}
-
-\begin{lstlisting}[caption={Кастомный хук useSocket}, label={lst:useSocket}]
-export function useSocket({ url, headers, onEvents }) {
-    const socketRef = useRef(null);
-    const [isConnected, setIsConnected] = useState(false);
-    const [token, setToken] = useState(null);
-    
-    // 1. Обновление токена доступа с фиксированным интервалом
-    useEffect(() => {
-        const updateAuth = () => getClientSession().then(setToken);
-        updateAuth();
-        const timer = setInterval(updateAuth, TOKEN_UPDATE_TIMEOUT);
-        return () => clearInterval(timer);
-    }, []);
-    
-    // 2. Установка и подписка на WebSocket
-    useEffect(() => {
-        const socket = io(url, { extraHeaders: { Authorization: token?.access_token }, path: '/ws/socket.io' });
-        socket.on('connect',    () => setIsConnected(true));
-        socket.on('disconnect', () => setIsConnected(false));
-        socket.on('connect_error', () => setIsConnected(false));
-        // Регистрируем пользовательские события
-        Object.entries(onEvents || {}).forEach(([event, handler]) => {
-            socket.on(event, handler);
-        });
-        socketRef.current = socket;
-        return () => socket.disconnect();
-    }, [url, token, JSON.stringify(headers), JSON.stringify(onEvents)]);
-    
-    // 3. Эмиттер и ручное управление
-    const emit      = (...args) => socketRef.current?.emit(...args);
-    const disconnect = ()      => socketRef.current?.disconnect();
-    const reconnect  = ()      => { socketRef.current?.disconnect(); socket.connect(); };
-    const connect    = ()      => socketRef.current?.connect();
-    
-    return { emit, disconnect, reconnect, connect, isConnected };
-}
-\end{lstlisting}
-
-В результате хук \texttt{useSocket} становится универсальным инструментом: он подходит для любых namespaces и событий, достаточно определить схему типов для \texttt{OnEvents} и \texttt{EmitEvents}.
-
-\subsubsection{Корректное объединение потоков сообщений}
-Передача и получение сообщений в чатах осуществляется в виде потоков, которые могут содержать старые и новые элементы. Для упорядочивания и исключения дубликатов разработаны:
-\begin{itemize}
-  \item \texttt{messagesComp}: компаратор, сравнивающий два сообщения по серверному \texttt{id} или по локальному \texttt{local\_id}, а затем по полю \texttt{created\_at};
-  \item \texttt{mergeMessages}: редуктор, объединяющий два списка \texttt{base} и \texttt{insert} в хронологическом порядке, сохраняя уникальность.
-\end{itemize}
-Компаратор сначала проверяет полное совпадение идентификаторов — это позволяет найти случаи, когда локально отправленное сообщение (ещё без \texttt{id} от сервера) соответствует уже подтверждённому сервером сообщению по \texttt{local\_id}. Если идентификаторы различны, они сравниваются по временной метке \texttt{created\_at}. Такая стратегия обеспечивает корректную сортировку и «слияние» потоков.
-
-\begin{lstlisting}[caption={Компаратор сообщений messagesComp}, label={lst:messagesComp}]
-const messagesComp = (a, b) => {
-    // 1) Идентификаторы совпадают → одинаковое сообщение
-    if ((a.id && b.id && a.id === b.id) ||
-        (a.local_id && b.local_id && a.local_id === b.local_id)) {
-        return 0; // EQUAL
-    }
-    // 2) Сравнение по дате создания
-    return new Date(a.created_at) < new Date(b.created_at) ? -1 : 1;
-};
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Функция слияния mergeMessages}, label={lst:mergeMessages}]
-export function mergeMessages({ base, insert, comp }) {
-    const result = [];
-    let i = 0, j = 0;
-    // Идём по двум спискам параллельно, добавляя меньший элемент
-    while (i < base.length && j < insert.length) {
-        if (comp(base[i], insert[j]) <= 0) result.push(base[i++]);
-        else result.push(insert[j++]);
-    }
-    // Добавляем остатки
-    return result.concat(base.slice(i)).concat(insert.slice(j));
-}
-\end{lstlisting}
-
-\subsubsection{Добавление сообщений и оптимистичный UI}
-Для плавного UX при отправке сообщений используется механизм optimistic UI:
-\begin{enumerate}
-  \item При отправке формируется временное сообщение \texttt{tempMsg} с полем \texttt{local\_id} и статусом \texttt{'sending'};
-  \item Это сообщение сразу добавляется в общий поток через \texttt{addMessages};
-  \item После подтверждения от сервера (приём события \texttt{'message\_sent'}) локальное сообщение заменяется на настоящий объект с серверным \texttt{id} благодаря функции слияния.
-\end{enumerate}
-
-\begin{lstlisting}[caption={Функция addMessages}, label={lst:addMessages}]
-function addMessages(newMsgs) {
-    setMessages(prev => mergeMessages({
-        base: prev || [],
-        insert: Array.isArray(newMsgs) ? newMsgs : [newMsgs],
-        comp: messagesComp
-    }));
-}
-\end{lstlisting}
-
-\begin{lstlisting}[caption={Отправка сообщения sendMessage}, label={lst:sendMessage}]
-function sendMessage(message) {
-    const localId = generateLocalId();
-    const tempMsg = { ...message, local_id: localId, status: 'sending', created_at: new Date().toISOString() };
-    // 1) Мгновенно отображаем в UI
-    addMessages(tempMsg);
-    // 2) Отправляем на сервер, сервер вернёт событие о доставке
-    emit('send_message', message);
-}
-\end{lstlisting}
-
-Такой подход позволяет пользователю видеть своё сообщение немедленно, даже если сеть медленная, и обеспечивает плавную замену локального объекта на серверный при получении подтверждения.
-
-\subsubsection{Двусторонняя пагинация через ScrollProvider}
-Для загрузки как старых, так и новых сообщений используется компонент \texttt{ScrollProvider}. Он вызывает соответствующие колбэки при достижении верха или низа скролла, что позволяет:
-\begin{itemize}
-  \item при прокрутке вверх дозагружать более ранние сообщения;
-  \item при прокрутке вниз обновлять список свежими сообщениями;
-  \item сохранять позицию скролла при подгрузке исторических или новых данных.
-\end{itemize}
-
-\begin{lstlisting}[caption={Использование ScrollProvider}, label={lst:ScrollProvider}]
-<ScrollProvider onScrollTop={loadOlder} onScrollBottom={loadNewer} accuracy={200}>
-    {messages.map(m => <ChatMessageItem key={m.id || m.local_id} {...m} />)}
-</ScrollProvider>
-\end{lstlisting}
-
-Комбинация хука \texttt{useSocket}, функций \texttt{mergeMessages}/\texttt{addMessages} и компонента \texttt{ScrollProvider} создаёт единый модуль чатов, отвечающий требованиям надёжности, масштабируемости и приятного UX. 
-
-% Конец раздела 3.7
+Таким образом, последовательная диаграмма на рисунке~\ref{fig:chats-flow} отражает полный цикл работы модуля «Chats»: от открытия приложения и установления защищённого соединения до приёма, отправки, редактирования и пометки сообщений, а также автоматического обновления JWT и переподключения WebSocket. Все события обрабатываются как в компоненте UI «Чат», так и в боковой панели, чтобы гарантировать актуальность списка бесед и статусов сообщений.

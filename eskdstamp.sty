@@ -39,10 +39,10 @@
 \newlength{\ESKD@margin@so}
 \newlength{\ESKD@margin@t}
 \newlength{\ESKD@margin@b}
-\setlength{\ESKD@margin@si}{18mm}
-\setlength{\ESKD@margin@so}{7mm}
-\setlength{\ESKD@margin@t}{5mm}
-\setlength{\ESKD@margin@b}{5mm}
+\setlength{\ESKD@margin@si}{13mm}
+\setlength{\ESKD@margin@so}{12mm}
+\setlength{\ESKD@margin@t}{7mm}
+\setlength{\ESKD@margin@b}{12mm}
 
 \newlength{\ESKDlineThick}
 \newlength{\ESKDlineThin}
@@ -51,7 +51,7 @@
 
 \newlength{\ESKD@padding@h}
 \newlength{\ESKD@padding@v}
-\setlength{\ESKD@padding@h}{5mm}
+\setlength{\ESKD@padding@h}{17mm}
 \setlength{\ESKD@padding@v}{10mm}
 
 \newif\ifESKD@ignstamp
@@ -1010,7 +1010,7 @@ headheight=0mm,headsep=0mm,footskip=0mm]{geometry}
 \fi%
 \changetext{\ESKD@tmpdimb-\ESKD@margin@t-\ESKD@margin@b-2\ESKD@curpad@v%
   \expandafter-\@nameuse{ESKD@style@sh@\ifESKD@ignstamp empty\else #1\fi}-\textheight}%
-  {\ESKD@tmpdima-\ESKD@margin@si-\ESKD@margin@so-2\ESKD@padding@h-\textwidth}{}{}{}%
+  {\ESKD@tmpdima-\ESKD@margin@si-\ESKD@margin@so-1\ESKD@padding@h-\textwidth}{}{}{}%
 \let\ESKD@thisstyle\@empty}
 
 \newcommand{\ESKDthisStyle}[1]{%

@@ -1,0 +1,25 @@
+@startuml
+actor Администратор
+participant "UI: Админ панель" as UI_Admin
+participant "Backend" as Backend
+
+== Приглашение преподавателя ==
+Администратор -> UI_Admin : Пригласить преподавателя\n(email, department_id)
+activate UI_Admin
+UI_Admin -> Backend : InviteTeacher { email, department_id }
+activate Backend
+Backend --> UI_Admin : InviteTeacherResponse { invite_link }
+deactivate Backend
+UI_Admin -> Администратор : Показать «Приглашение отправлено»\n(invite_link)
+deactivate UI_Admin
+
+== Приглашение студента ==
+Администратор -> UI_Admin : Пригласить студента\n(email, group_id)
+activate UI_Admin
+UI_Admin -> Backend : InviteStudent { email, group_id }
+activate Backend
+Backend --> UI_Admin : InviteStudentResponse { invite_link }
+deactivate Backend
+UI_Admin -> Администратор : Показать «Приглашение отправлено»\n(invite_link)
+deactivate UI_Admin
+@enduml

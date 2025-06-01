@@ -61,20 +61,7 @@ Feature-Sliced Design (FSD) — это гибкий набор рекоменд�
 		useRegistrationUniversity();
 		
 		return (
-		<Card>
-		<CardContent>
-		<RegistrationForm
-		schema={universitySchema({ password: formDataRef.current?.password })}
-		onChangeFormData={data => (formDataRef.current = data)}
-		onChangeIsError={setIsError}
-		/>
-		<Button
-		text={isLoading ? 'Загрузка...' : 'Зарегистрировать'}
-		disabled={isError.length > 0 || isLoading}
-		onClick={onSubmit}
-		/>
-		</CardContent>
-		</Card>
+			<div>...</div>
 		);
 	}
 \end{lstlisting}
@@ -88,24 +75,8 @@ Feature-Sliced Design (FSD) — это гибкий набор рекоменд�
 		const router = useRouter();
 		
 		const onSubmit = async () => {
-			const data = formDataRef.current;
-			if (!data) return;
-			setIsLoading(true);
-			try {
-				const res = await registerUniversity(data);
-				if (res.ok) {
-					router.push('/admin');
-				} else {
-					// обработка ошибок от API
-					setIsError([res.errorMessage || 'Неизвестная ошибка']);
-				}
-			} catch (e) {
-				setIsError(['Сетевая ошибка, попробуйте позже']);
-			} finally {
-				setIsLoading(false);
-			}
+			...
 		};
-		
 		return { formDataRef, isError, setIsError, onSubmit, isLoading };
 	}
 \end{lstlisting}
