@@ -3,7 +3,7 @@ actor Пользователь as User
 participant "Сервер (Next.js/AuthJS)" as Client
 participant "Backend" as Backend
 
-== Шаг 1: Отправка логина/parоля в AuthJS ==
+== Шаг 1: Отправка логина/пaроля в AuthJS ==
 User-> Client : Ввести username, password и нажать «Войти»
 activate Client
 Client -> Client : AuthJS: собрать { username, password }
