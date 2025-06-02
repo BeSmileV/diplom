@@ -175,20 +175,26 @@ Codility         & -- & -- & +  \\
     {\small Диаграмма действий администратора}
 \end{frame}
 
-\begin{frame}{Взаимодействие преподавателя с web-приложением}
-    \centering
-    \includegraphics[width=\linewidth]{static/TeacherFlowchart.png}
-    \vspace{0.5em}
-    {\small Диаграмма действий преподавателя}
-\end{frame}
+%\begin{frame}{Взаимодействие преподавателя с web-приложением}
+%    \centering
+%    \includegraphics[width=\linewidth]{static/TeacherFlowchart.png}
+%    \vspace{0.5em}
+%    {\small Диаграмма действий преподавателя}
+%\end{frame}
+%
+%\begin{frame}{Взаимодействие студента с web-приложением}
+%    \centering
+%    \includegraphics[width=\linewidth]{static/StudentFlowchart.png}
+%    \vspace{0.5em}
+%    {\small Диаграмма действий студента}
+%\end{frame}
 
-\begin{frame}{Взаимодействие студента с web-приложением}
+\begin{frame}{Взаимодействие студента и преподавателя с web-приложением}
     \centering
-    \includegraphics[width=\linewidth]{static/StudentFlowchart.png}
+    \includegraphics[width=\linewidth]{static/TeacherStudentFlowchart.png}
     \vspace{0.5em}
-    {\small Диаграмма действий студента}
+    {\small Диаграмма действий студента и преподавателя}
 \end{frame}
-
 
 %\begin{frame}{Создание приглашения пользователей}
 %\vspace{0.5em}
@@ -250,22 +256,22 @@ Codility         & -- & -- & +  \\
 \small Диаграмма взаимодействия при просмотре задания конкретного студента
 \end{frame}
 
-\begin{frame}{Интерфейс задания определённого студента}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskStudentSend.png} \\
-        \small Интерфейс задания со стороны студента
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskTeacherDetailByStudent.png} \\
-        \small Просмотр задания преподавателем
-    \end{column}
-\end{columns}
-\end{frame}
+%\begin{frame}{Интерфейс задания определённого студента}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/TaskStudentSend.png} \\
+%        \small Интерфейс задания со стороны студента
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/TaskTeacherDetailByStudent.png} \\
+%        \small Просмотр задания преподавателем
+%    \end{column}
+%\end{columns}
+%\end{frame}
 
 \begin{frame}{Диаграммы взаимодействия с чатами}
 \vspace{0.5em}
@@ -361,96 +367,107 @@ Codility         & -- & -- & +  \\
 %\end{columns}
 %\end{frame}
 
-\begin{frame}{Результаты выполнения тестов}
+\begin{frame}{Тестирование}
 \small
 \justifying
-В ходе работы была протестирована сложная бизнес-логика Web-приложения. Также проведено тестирование собственной UI-библиотеки.
-
-\vspace{1em}
 
 \begin{columns}
-  \begin{column}{0.48\textwidth}
-    \centering
-    \includegraphics[width=0.8\linewidth]{static/ProjectTests.png} \\
-    \small Результаты в Web-приложении
+  % Левая колонка: описание модулей (с выравниванием по верху)
+  \begin{column}{0.45\textwidth}
+    В ходе работы были протестированы следующие модули:
+    \begin{itemize}
+      \item \textbf{Web-приложение:}
+      \begin{itemize}
+        \item Модуль чатов
+        \item Модуль редактора текста
+      \end{itemize}
+      \item \textbf{UI-библиотека:}
+      \begin{itemize}
+        \item Модуль создания форм
+        \item Модуль пикера даты и времени
+      \end{itemize}
+    \end{itemize}
   \end{column}
-  \begin{column}{0.48\textwidth}
+
+  % Правая колонка: две картинки, расположенные вертикально (тоже выравнена по верху)
+  \begin{column}{0.55\textwidth}
     \centering
-    \includegraphics[width=0.8\linewidth]{static/LibTests.png} \\
-    \small Результаты в UI-библиотеке
+    % Первая картинка
+    \includegraphics[height=3cm]{static/ProjectTests.png} \\
+    \scriptsize Скриншот результатов тестирования Web-приложения
+
+    \vspace{1em} % интервал между двумя картинками
+
+    % Вторая картинка
+    \includegraphics[height=3cm]{static/LibTests.png} \\
+    \scriptsize Скриншот результатов тестирования UI-библиотеки
   \end{column}
 \end{columns}
 \end{frame}
+
+
+
 
 \begin{frame}{Заключение}
 \small
-В ходе выполнения выпускной квалификационной работы были успешно решены поставленные задачи:
-
-\begin{itemize}
-  \item Проведён анализ существующих образовательных приложений и решений для автоматизированной проверки кода;
-  \item Разработана архитектура front-end части Web–приложения с применением Feature-Sliced Design и современных паттернов проектирования;
-  \item Разработан удобный пользовательский интерфейс для студентов и преподавателей;
-  \item Реализованы модули аутентификации, управления заданиями, чатами, а также внедрён механизм обмена сообщениями в реальном времени через WebSocket с обработкой переподключения и синхронизацией состояния;
-  \item Реализована интеграция с AI для автоматизированной проверки решений;
-  \item Проведено тестирование бизнес-логики Web–приложения, подтверждающее корректность работы основных функций.
-\end{itemize}
+В ходе выполнения выпускной квалификационной работы поставленные задачи были успешно решены. Результатом стало веб-приложение с системой управления заданиями, поддерживающей автоматическую проверку решений студентов с помощью ИИ, а также чатами для общения в реальном времени через WebSocket.
 \end{frame}
 
 
-\begin{frame}{Интерфейс создания приглашения пользователей}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/InviteStudentPage.png} \\
-        \small Форма приглашения студента
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/InviteTeacherPage.png} \\
-        \small Форма приглашения преподавателя
-    \end{column}
-\end{columns}
-\end{frame}
-
-
-\begin{frame}{Интерфейс Регистрации}
-\begin{columns}
-    \begin{column}{0.45\textwidth}
-        \centering
-        \includegraphics[height=5cm]{static/RegTeacherPage.png} \\
-        \small Регистрация преподавателя
-    \end{column}
-    \begin{column}{0.45\textwidth}
-        \centering
-        \includegraphics[height=5cm]{static/RegStudentPage.png} \\
-        \small Регистрация студента
-    \end{column}
-\end{columns}
-\end{frame}
+%\begin{frame}{Интерфейс создания приглашения пользователей}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/InviteStudentPage.png} \\
+%        \small Форма приглашения студента
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/InviteTeacherPage.png} \\
+%        \small Форма приглашения преподавателя
+%    \end{column}
+%\end{columns}
+%\end{frame}
 
 
-\begin{frame}{Интерфейс списка и просмотра заданий}
-\vspace{0.5em}
+%\begin{frame}{Интерфейс Регистрации}
+%\begin{columns}
+%    \begin{column}{0.45\textwidth}
+%        \centering
+%        \includegraphics[height=5cm]{static/RegTeacherPage.png} \\
+%        \small Регистрация преподавателя
+%    \end{column}
+%    \begin{column}{0.45\textwidth}
+%        \centering
+%        \includegraphics[height=5cm]{static/RegStudentPage.png} \\
+%        \small Регистрация студента
+%    \end{column}
+%\end{columns}
+%\end{frame}
 
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{static/TaskListTeacher.png} \\
-        \small Список заданий
 
-        \vspace{1em}
-
-        \includegraphics[width=0.9\linewidth]{static/TaskTeacherDetail.png} \\
-        \small Просмотр задания преподавателем
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskStudentNotSend.png} \\
-        \small Просмотр задания студентом
-    \end{column}
-\end{columns}
-\end{frame}
+%\begin{frame}{Интерфейс списка и просмотра заданий}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.9\linewidth]{static/TaskListTeacher.png} \\
+%        \small Список заданий
+%
+%        \vspace{1em}
+%
+%        \includegraphics[width=0.9\linewidth]{static/TaskTeacherDetail.png} \\
+%        \small Просмотр задания преподавателем
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/TaskStudentNotSend.png} \\
+%        \small Просмотр задания студентом
+%    \end{column}
+%\end{columns}
+%\end{frame}
 
 \end{document}
