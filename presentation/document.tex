@@ -10,6 +10,7 @@
 % Изображения
 \usepackage{graphicx}
 \usepackage{ragged2e}
+\usepackage{tikz}
 
 % Оформление слайдов
 \setbeamertemplate{navigation symbols}{} % Убираем навигационные символы
@@ -52,9 +53,7 @@
 
 \begin{minipage}{0.95\textwidth}
 \centering
-\textbf{
-Разработка образовательной онлайн-платформы с возможностью\\ автоматизированной проверки задач по программированию
-}
+«\textbf{Разработка front-end Web-приложения – учебной среды с чатами и AI-анализом кода лабораторных работ}»
 \end{minipage}
 
 \vspace{1em}
@@ -63,7 +62,7 @@
 \footnotesize
 \textbf{Автор работы:} Бондаренко Сергей Владимирович \\[0.25em]
 \textbf{Направление подготовки:} 09.03.04 «Программная инженерия» \\[0.25em]
-\textbf{Руководитель:} Мельников Антон Борисович, Директор департамента автоматизации бизнеса
+\textbf{Руководитель:} Мельников Антон Борисович, руководитель департамента автоматизации бизнеса ООО «Технологии надежности»
 \end{minipage}
 }
 \end{frame}
@@ -71,17 +70,17 @@
 
 % Пример первого слайда
 \begin{frame}{Цель и задачи}
-\textbf{Цель:} улучшить и упростить опыт преподавателей и студентов через разработку клиентской части единого образовательного приложения с обменом сообщениями, автоматической проверкой решений и удобным интерфейсом.
+\textbf{Цель:} повысить и облегчить эффективность работы преподавателей и обучения студентов через создание front-end части Web-приложения для управления учебным процессом, общения и автоматической проверки заданий.
 
-\vspace{1em}
+\vspace{0.5em}
 \textbf{Задачи:}
 \begin{enumerate}
-  \item Провести анализ существующих образовательных решений.
-  \item Определить подходящую архитектуру и технологический стек.
-  \item Разработать пользовательский интерфейс, ориентированный на преподавателей и студентов.
-  \item Реализовать модули управления учебными структурами, заданиями и системой общения.
-  \item Интегрировать модуль ИИ-проверки кода.
-  \item Выполнить тестирование бизнес-логики приложения.
+	\item Провести анализ существующих образовательных решений.
+	\item Определить архитектуру и технологический стек.
+	\item Разработать пользовательский интерфейс.
+	\item Реализовать модули для управления учебными структурами, заданиями и системой общения.
+	\item Интегрировать модуль автоматической проверки решений с использованием ИИ.
+	\item Провести тестирование бизнес-логики приложения.
 \end{enumerate}
 \end{frame}
 
@@ -99,20 +98,18 @@
 \centering
 \begin{tabular}{lccc}
 \hline
-\textbf{Функция} & Управление & Общение & AI-анализ \\
+\textbf{Аналоги/Функции} & Система заданий & Общение & AI-анализ \\
 \hline
 Google Classroom & + & -- & -- \\
 MS Teams         & + & +  & -- \\
 Moodle           & + & -- & -- \\
-VK               & -- & +  & -- \\
-Telegram         & -- & +  & -- \\
 CodeSignal       & -- & -- & +  \\
 Codility         & -- & -- & +  \\
 \hline
 \end{tabular}
 \end{frame}
 
-\begin{frame}{Выбранные технологии}
+\begin{frame}{Стек технологий}
 
 \centering
 \includegraphics[height=1.6cm]{static/nextjs-logo.png} \hspace{1cm}
@@ -128,7 +125,7 @@ Codility         & -- & -- & +  \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Архитектура приложения}
+\begin{frame}{Архитектура Web-приложения}
 \begin{columns}
     \begin{column}{0.45\textwidth}
         \centering
@@ -142,7 +139,7 @@ Codility         & -- & -- & +  \\
     \end{column}
 \end{columns}
 
-\vspace{1em}
+\vspace{0.5em}
 
 \small
 \begin{itemize}
@@ -152,14 +149,14 @@ Codility         & -- & -- & +  \\
 
 \end{frame}
 
-\begin{frame}{Модуль аутентификации}
+\begin{frame}{Модуль аутентификации и авторизации}
 \small
 
 \begin{columns}
     \begin{column}{0.5\textwidth}
         \centering
         \includegraphics[width=0.95\linewidth]{static/AuthRefresh.png} \\
-        \small Диаграмма авторизации
+        \small Диаграмма авторизации и аутентификации
     \end{column}
     \begin{column}{0.5\textwidth}
         \centering
@@ -169,65 +166,61 @@ Codility         & -- & -- & +  \\
 \end{columns}
 \end{frame}
 
-\begin{frame}{Административная панель}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[height=3cm]{static/InviteStudentPage.png} \\
-        \small Форма приглашения студента
-
-        \vspace{1em}
-
-        \includegraphics[height=3cm]{static/InviteTeacherPage.png} \\
-        \small Форма приглашения преподавателя
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/Admin.png} \\
-        \small Диаграмма приглашения пользователей 
-    \end{column}
-\end{columns}
+\begin{frame}{Взаимодействие администратора с web-приложением}
+    \centering
+    \includegraphics[width=\linewidth]{static/AdminFlowchart.png}
+    \vspace{0.5em}
+    {\small Диаграмма действий администратора}
 \end{frame}
 
-\begin{frame}{Регистрация}
-\begin{columns}
-    \begin{column}{0.3\textwidth}
-        \centering
-        \includegraphics[height=3cm]{static/RegTeacherPage.png} \\
-        \small Регистрация преподавателя
+\begin{frame}{Взаимодействие преподавателя с web-приложением}
+    \centering
+    \includegraphics[width=\linewidth]{static/TeacherFlowchart.png}
+    \vspace{0.5em}
+    {\small Диаграмма действий преподавателя}
+\end{frame}
 
-        \vspace{1em}
-
-        \includegraphics[height=3cm]{static/RegStudentPage.png} \\
-        \small Регистрация студента
-    \end{column}
-    \begin{column}{0.65\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/RegistrationDiagrams.png} \\
-        \small Диаграмма регистрации пользователя
-    \end{column}
-\end{columns}
+\begin{frame}{Взаимодействие студент с web-приложением}
+    \centering
+    \includegraphics[width=\linewidth]{static/StudentFlowchart.png}
+    \vspace{0.5em}
+    {\small Диаграмма действий студента}
 \end{frame}
 
 
-\begin{frame}{Создание класса}
-\vspace{0.5em}
+%\begin{frame}{Создание приглашения пользователей}
+%\vspace{0.5em}
+%
+%\centering
+%\includegraphics[width=0.7\linewidth]{static/Admin.png} \\
+%\small Диаграмма приглашения пользователей 
+%\end{frame}
+%
+%
+%\begin{frame}{Регистрация}
+%\centering
+%\includegraphics[width=0.7\linewidth]{static/RegistrationDiagrams.png} \\
+%\small Диаграмма регистрации пользователя
+%\end{frame}
 
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/ClassRoomCreate.png} \\
-        \small Интерфейс создания класса
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/ClassRoomCreateDiagram.png} \\
-        \small Диаграмма создания класса
-    \end{column}
-\end{columns}
-\end{frame}
+
+
+%\begin{frame}{Создание класса}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/ClassRoomCreate.png} \\
+%        \small Интерфейс создания класса
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/ClassRoomCreateDiagram.png} \\
+%        \small Диаграмма создания класса
+%    \end{column}
+%\end{columns}
+%\end{frame}
 
 \begin{frame}{Создание задачи}
 \vspace{0.5em}
@@ -235,38 +228,17 @@ Codility         & -- & -- & +  \\
 \begin{columns}
     \begin{column}{0.5\textwidth}
         \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskCreate.png} \\
+        \includegraphics[width=\linewidth]{static/TaskCreate.png} \\
         \small Интерфейс создания задачи
     \end{column}
     \begin{column}{0.5\textwidth}
         \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskCreateDiagram.png} \\
+        \includegraphics[width=\linewidth]{static/TaskCreateDiagram.png} \\
         \small Диаграмма создания задачи
     \end{column}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Список и просмотр заданий}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{static/TaskListTeacher.png} \\
-        \small Список заданий
-
-        \vspace{1em}
-
-        \includegraphics[width=0.9\linewidth]{static/TaskTeacherDetail.png} \\
-        \small Просмотр задания преподавателем
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskStudentNotSend.png} \\
-        \small Просмотр задания студентом
-    \end{column}
-\end{columns}
-\end{frame}
 
 \begin{frame}{Отправка задания на проверку}
 \vspace{0.5em}
@@ -327,27 +299,27 @@ Codility         & -- & -- & +  \\
 \end{columns}
 \end{frame}
 
-\begin{frame}{Диаграммы редактирования и чтения сообщений}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/MessageEditDiagram.png} \\
-        \small Редактирование уже отправленного сообщения
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/MessageReadDiagram.png} \\
-        \small Отметка о прочтении получателем
-    \end{column}
-\end{columns}
-\end{frame}
+%\begin{frame}{Диаграммы редактирования и чтения сообщений}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/MessageEditDiagram.png} \\
+%        \small Редактирование уже отправленного сообщения
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/MessageReadDiagram.png} \\
+%        \small Отметка о прочтении получателем
+%    \end{column}
+%\end{columns}
+%\end{frame}
 
 \begin{frame}{Переподключение WebSocket: диаграмма последовательности}
 \small
 \justifying
-В случае потери соединения с сервером реализован механизм автоматического переподключения. При восстановлении соединения клиент и сервер синхронизируют состояние, включая активный чат и непрочитанные сообщения.
+При истечении срока действия access-токена реализован механизм его автоматического обновления и повторного переподключения WebSocket-соединения.
 
 \vspace{0.5em}
 
@@ -358,7 +330,7 @@ Codility         & -- & -- & +  \\
 \begin{frame}{Интерфейс чата}
 \small
 \justifying
-Пользовательский интерфейс чата предоставляет возможность обмена сообщениями в режиме реального времени. Поддерживается отображение истории сообщений и отправка файлов.
+Пользовательский интерфейс чата предоставляет возможность обмена сообщениями в режиме реального времени.
 
 \vspace{1em}
 
@@ -366,39 +338,39 @@ Codility         & -- & -- & +  \\
 \includegraphics[width=0.85\textwidth]{static/ChatsStudentPage.png}
 \end{frame}
 
-\begin{frame}{Интерфейс создания чатов}
+%\begin{frame}{Интерфейс создания чатов}
+%\small
+%\justifying
+%Преподаватель может создавать как групповые, так и личные чаты со студентами и коллегами. Студентам доступно только создание личных чатов с преподавателями и студентами.
+%
+%\vspace{1em}
+%
+%\begin{columns}
+%  \begin{column}{0.5\textwidth}
+%    \centering
+%    \includegraphics[width=0.95\linewidth]{static/ChatsStudentCreateChat.png} \\
+%    \small Личный чат
+%  \end{column}
+%  \begin{column}{0.5\textwidth}
+%    \centering
+%    \includegraphics[width=0.95\linewidth]{static/ChatsTeacherCreateGroupChat.png} \\
+%    \small Групповой чат
+%  \end{column}
+%\end{columns}
+%\end{frame}
+
+\begin{frame}{Результаты выполнения тестов}
 \small
 \justifying
-Форма создания чатов позволяет преподавателю инициировать личные и групповые чаты со студентами. Поддерживается выбор участников, автоматическое объединение по классам и создание личных чатов.
+В ходе работы была протестирована сложная бизнес-логика Web-приложения. Также проведено тестирование собственной UI-библиотеки.
 
 \vspace{1em}
 
 \begin{columns}
   \begin{column}{0.48\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{static/ChatsStudentCreateChat.png} \\
-    \small Личный чат
-  \end{column}
-  \begin{column}{0.48\textwidth}
-    \centering
-    \includegraphics[width=\linewidth]{static/ChatsTeacherCreateGroupChat.png} \\
-    \small Групповой чат
-  \end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Результаты выполнения тестов}
-\small
-\justifying
-В ходе работы была протестирована тяжёлая бизнес-логика приложения. Также проведено тестирование собственной UI-библиотеки.
-
-\vspace{0.5em}
-
-\begin{columns}
-  \begin{column}{0.48\textwidth}
-    \centering
     \includegraphics[width=0.8\linewidth]{static/ProjectTests.png} \\
-    \small Результаты в приложении
+    \small Результаты в Web-приложении
   \end{column}
   \begin{column}{0.48\textwidth}
     \centering
@@ -414,13 +386,69 @@ Codility         & -- & -- & +  \\
 
 \begin{itemize}
   \item Проведён анализ существующих образовательных приложений и решений для автоматизированной проверки кода;
-  \item Разработана архитектура клиентской части приложения с применением Feature-Sliced Design и современных паттернов проектирования;
-  \item Разработан интуитивно понятный пользовательский интерфейс для студентов и преподавателей;
+  \item Разработана архитектура front-end части Web–приложения с применением Feature-Sliced Design и современных паттернов проектирования;
+  \item Разработан удобный пользовательский интерфейс для студентов и преподавателей;
   \item Реализованы модули аутентификации, управления заданиями, чатами, а также внедрён механизм обмена сообщениями в реальном времени через WebSocket с обработкой переподключения и синхронизацией состояния;
   \item Реализована интеграция с AI для автоматизированной проверки решений;
-  \item Проведено тестирование бизнес-логики приложения, подтверждающее корректность работы основных функций.
+  \item Проведено тестирование бизнес-логики Web–приложения, подтверждающее корректность работы основных функций.
 \end{itemize}
 \end{frame}
 
+
+\begin{frame}{Интерфейс создания приглашения пользователей}
+\vspace{0.5em}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.95\linewidth]{static/InviteStudentPage.png} \\
+        \small Форма приглашения студента
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.95\linewidth]{static/InviteTeacherPage.png} \\
+        \small Форма приглашения преподавателя
+    \end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Интерфейс Регистрации}
+\begin{columns}
+    \begin{column}{0.45\textwidth}
+        \centering
+        \includegraphics[height=5cm]{static/RegTeacherPage.png} \\
+        \small Регистрация преподавателя
+    \end{column}
+    \begin{column}{0.45\textwidth}
+        \centering
+        \includegraphics[height=5cm]{static/RegStudentPage.png} \\
+        \small Регистрация студента
+    \end{column}
+\end{columns}
+\end{frame}
+
+
+\begin{frame}{Интерфейс списка и просмотра заданий}
+\vspace{0.5em}
+
+\begin{columns}
+    \begin{column}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{static/TaskListTeacher.png} \\
+        \small Список заданий
+
+        \vspace{1em}
+
+        \includegraphics[width=0.9\linewidth]{static/TaskTeacherDetail.png} \\
+        \small Просмотр задания преподавателем
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.95\linewidth]{static/TaskStudentNotSend.png} \\
+        \small Просмотр задания студентом
+    \end{column}
+\end{columns}
+\end{frame}
 
 \end{document}
