@@ -8,29 +8,30 @@
   % Отключаем разрыв страницы перед/внутри и после thebibliography
   \let\clearpage\relax
   \let\newpage\relax
-  \let\addcontentsline\relax
+  % Переопределяем addcontentsline так, чтобы «съедать» все 3 аргумента
+    \renewcommand{\addcontentsline}[3]{}
   % Подавляем автоматический заголовок, который thebibliography может вставлять
   \renewcommand{\refname}{}
 
   \begin{thebibliography}{99}
 
     \bibitem{1}
+    TypeScript Handbook. Официальная документация. URL: \url{https://www.typescriptlang.org/docs/handbook/intro.html}.
+    
+    \bibitem{2}
     React. Официальная документация. URL: \url{https://reactjs.org/}.
 
-    \bibitem{2}
+    \bibitem{3}
     Next.js. Официальная документация. URL: \url{https://nextjs.org/docs}.
 
-    \bibitem{3}
-    TypeScript Handbook. Официальная документация. URL: \url{https://www.typescriptlang.org/docs/handbook/intro.html}.
-
     \bibitem{4}
-    Auth.js (ранее NextAuth.js). Официальная документация. URL: \url{https://next-auth.js.org/}.
+    Socket.IO. Официальная документация. URL: \url{https://socket.io/docs/}.
 
     \bibitem{5}
-    JSON Web Token (JWT). RFC 7519. URL: \url{https://tools.ietf.org/html/rfc7519}.
+    Auth.js (ранее NextAuth.js). Официальная документация. URL: \url{https://next-auth.js.org/}.
 
     \bibitem{6}
-    Socket.IO. Официальная документация. URL: \url{https://socket.io/docs/}.
+    JSON Web Token (JWT). RFC 7519. URL: \url{https://tools.ietf.org/html/rfc7519}.
 
     \bibitem{7}
     MDN Web Docs. HTML. URL: \url{https://developer.mozilla.org/ru/docs/Web/HTML}.

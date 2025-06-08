@@ -169,3 +169,18 @@ sorting=ntvy,
 \addbibresource{library.bib}
 
 \usepackage{subcaption}
+\usepackage{booktabs}
+
+\setlength{\parindent}{1cm}
+
+
+\usepackage{enumitem}
+% Для первого уровня списка enumerate
+\setlist[enumerate,1]{label=\arabic*), leftmargin=1cm}
+
+% Для второго уровня (если нужно)
+\setlist[enumerate,2]{label=\alph*), leftmargin=1cm}
+
+% Для itemize (если нужно настроить)
+\setlist[itemize]{leftmargin=1cm}
+

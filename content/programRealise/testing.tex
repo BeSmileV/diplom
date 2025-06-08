@@ -1,0 +1,66 @@
+\subsection{Тестирование}
+
+\subsubsection{Покрытие кода в приложении}
+
+\begin{table}[H]
+  \centering
+    \small
+  \caption{Покрытие кода фронтенд-приложения (Next.js) по результатам \texttt{npx jest --coverage}}
+  \label{tab:app-coverage}
+  \begin{tabular}{lrrrr}
+  	\toprule
+  	\textbf{File}                & \textbf{\%Stmts} & \textbf{\%Branch} & \textbf{\%Funcs} & \textbf{\%Lines} \\ \midrule
+  	All files                    &            95.65 &             77.77 &           100.00 &           100.00 \\
+  	features/Chats/lib           &           100.00 &            100.00 &           100.00 &           100.00 \\
+  	\quad mergeMessages.ts       &           100.00 &            100.00 &           100.00 &           100.00 \\
+  	shared/ui/TextEditor/lib     &            90.47 &             68.42 &           100.00 &           100.00 \\
+  	\quad processTextToTiptap.ts &            94.11 &             72.22 &           100.00 &           100.00 \\
+  	\quad processTiptapToText.ts &            75.00 &              0.00 &           100.00 &           100.00 \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent
+В таблице~\ref{tab:app-coverage} приведены четыре основные метрики покрытия:
+\begin{itemize}
+  \item \textbf{\%Stmts} (Statements) — процент операторов кода, выполненных в ходе тестов;
+  \item \textbf{\%Branch} (Branches) — процент ветвей условных операторов, затронутых тестами;
+  \item \textbf{\%Funcs} (Functions) — процент функций, вызванных хотя бы одним тестом;
+  \item \textbf{\%Lines} (Lines) — процент строк кода, исполненных тестами.
+\end{itemize}
+Для ключевых модулей (например, \texttt{mergeMessages.ts}) все метрики равны 100\,\%, а в функциях преобразования текста остаются непротестированные ветви и строки (строки 9, 13, 15–22 в \texttt{processTextToTiptap.ts} и строка 2 в \texttt{processTiptapToText.ts}).
+
+\subsubsection{Покрытие кода в отдельной библиотеке}
+
+\begin{table}[H]
+  \small
+  \centering
+  \caption{Покрытие кода утилитной библиотеки по результатам \texttt{npx jest --coverage}}
+  \label{tab:lib-coverage}
+  \begin{tabular}{lrrrr}
+  	\toprule
+  	\textbf{File}                           & \textbf{\%Stmts} & \textbf{\%Branch} & \textbf{\%Funcs} & \textbf{\%Lines} \\ \midrule
+  	All files                               &            52.89 &             48.76 &            20.68 &            52.65 \\
+  	lib/dict/getDeepValue.ts                &            86.36 &             73.33 &           100.00 &            85.71 \\
+  	lib/dict/setDeepValue.ts                &           100.00 &            100.00 &           100.00 &           100.00 \\
+  	ui/DateTimePicker/lib/changeInterval.ts &           100.00 &             96.29 &           100.00 &           100.00 \\ \bottomrule
+  \end{tabular}
+\end{table}
+
+\noindent
+В таблице~\ref{tab:lib-coverage} показано, что основные утилитные функции библиотеки (\texttt{getDeepValue}, \texttt{setDeepValue}, \texttt{changeInterval}) полностью или почти полностью покрыты, тогда как файлы без тестов в отчёте не отображаются.
+
+\subsubsection{Методы тестирования}
+
+\begin{itemize}
+  \item \textbf{Модульное тестирование (unit testing):}  
+    для каждой функции и компонента написаны независимые тесты, покрывающие:
+    граничные и некорректные входные данные (undefined, пустые массивы), типичные сценарии и пограничные случаи.
+  \item \textbf{TDD–подход (Test–Driven Development):}  
+    реализация функций по циклу «\texttt{test → fail} → написать минимальный код → \texttt{test → pass} → рефакторинг».
+  \item \textbf{Покрытие ветвлений (branch coverage):}  
+    каждый сценарий условных операторов (\texttt{if/else}, тернарные выражения, \texttt{switch}) проверяется отдельными тестами.
+  \item \textbf{Round-trip-тесты:}  
+    для преобразований «текст → HTML → текст» (функции \texttt{processTextToTiptap} / \texttt{processTiptapToText}) проверяется обратимость и корректность в сложных случаях (вложенные теги, переносы строк).
+  \item \textbf{Инструментация и сбор покрытия:}  
+    запуск командой \texttt{npx jest --coverage} автоматически оборачивает счётчиками все исходники и собирает метрики Statements, Branches, Functions и Lines.
+\end{itemize}
