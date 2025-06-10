@@ -54,13 +54,13 @@
 %%% Заголовки разделов
 \usepackage{titlesec}
 \titleformat{\section}[block]{\normalfont\Large\bfseries}{\thesection}{1em}{}
-\titlespacing*{\section}{20pt}{14pt}{8pt}
+\titlespacing*{\section}{1cm}{14pt}{8pt}
 
 \titleformat{\subsection}[block]{\normalfont\large\bfseries}{\thesubsection}{1em}{}
-\titlespacing*{\subsection}{20pt}{12pt}{6pt}
+\titlespacing*{\subsection}{1cm}{12pt}{6pt}
 
 \titleformat{\subsubsection}[block]{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
-\titlespacing*{\subsubsection}{20pt}{10pt}{4pt}
+\titlespacing*{\subsubsection}{1cm}{10pt}{4pt}
 
 %%% === Патч нумерации subsubsection ===
 \usepackage{etoolbox}               % подтягиваем \preto
@@ -152,7 +152,6 @@ postbreak=\mbox{\textcolor{gray}{$\hookrightarrow$}\space},
 %%% 4) Устанавливаем tscustom по умолчанию
 \lstset{style=tscustom}
 
-%\bibliographystyle{gost-numeric.bbx}
 \usepackage[parentracker=true,
 backend=biber,
 hyperref=false,
@@ -163,10 +162,10 @@ autolang=other,
 citestyle=gost-numeric,
 defernumbers=true,
 bibstyle=gost-numeric,
-sorting=ntvy,
+sorting=none,
 ]{biblatex}
+\addbibresource{bibliography.bib}
 
-\addbibresource{library.bib}
 
 \usepackage{subcaption}
 \usepackage{booktabs}
@@ -184,3 +183,25 @@ sorting=ntvy,
 % Для itemize (если нужно настроить)
 \setlist[itemize]{leftmargin=1cm}
 
+
+%%% Настройка основного шрифта и интервала
+%\usepackage{setspace} % Добавляем пакет для интервалов
+%\onehalfspacing       % Полуторный межстрочный интервал
+%\renewcommand{\normalsize}{\fontsize{14pt}{16pt}\selectfont} % 14pt с интервалом 1.5
+
+%%% Абзацный отступ (уже есть, но дублируем для надежности)
+\setlength{\parindent}{1cm} 
+
+%%% Настройка отступов для заголовков
+\usepackage{titlesec}
+% Section: 1cm слева, 14pt сверху, 8pt снизу
+\titleformat{\section}[block]{\normalfont\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{1cm}{14pt}{8pt}
+
+% Subsection
+\titleformat{\subsection}[block]{\normalfont\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{1cm}{12pt}{6pt}
+
+% Subsubsection
+\titleformat{\subsubsection}[block]{\normalfont\bfseries}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{1cm}{10pt}{4pt}
