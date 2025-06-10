@@ -172,7 +172,6 @@ sorting=none,
 
 \setlength{\parindent}{1cm}
 
-
 \usepackage{enumitem}
 % Для первого уровня списка enumerate
 \setlist[enumerate,1]{label=\arabic*), leftmargin=1cm}
@@ -205,3 +204,10 @@ sorting=none,
 % Subsubsection
 \titleformat{\subsubsection}[block]{\normalfont\bfseries}{\thesubsubsection}{1em}{}
 \titlespacing*{\subsubsection}{1cm}{10pt}{4pt}
+
+%%% Убираем заголовок "Содержание" у оглавления
+\makeatletter
+\renewcommand{\tableofcontents}{%
+    \@starttoc{toc}%
+}
+\makeatother
