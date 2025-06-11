@@ -20,9 +20,12 @@
 
 \subsubsection{Слои архитектуры Feature-Sliced Design}
 
+В таблице \ref{tab:fsd-layers} представлены слои архитектуры Feature-Sliced Design, сгруппированные по уровню абстракции и ответственности.
+
 \begin{table}[H]
   \centering
   \caption{Слои архитектуры Feature-Sliced Design}
+  \label{tab:fsd-layers}
   \begin{tabular}{|p{3cm}|p{11cm}|}
     \hline
     \textbf{Слой} & \textbf{Описание и назначение} \\ \hline
@@ -57,7 +60,7 @@
   \item \texttt{model} — модели данных, хранилища состояния, типизация и бизнес-логика;
   \item \texttt{api} — функции для работы с внешними сервисами, включая описание типов запросов и маппинг ответов;
   \item \texttt{lib} — вспомогательные функции и библиотеки, используемые в пределах данного среза;
-  \item \texttt{config} — конфигурационные файлы и переключатели функциональности (feature flags).
+  \item \texttt{config} — конфигурационные файлы и переключатели функциональности.
 \end{itemize}
 
 \subsubsection*{Преимущества выбранного подхода}

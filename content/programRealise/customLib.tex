@@ -20,7 +20,9 @@
 \end{enumerate}
 
 \paragraph{Определение схемы формы}
+
 Схема формы описывается функцией, возвращающей массив объектов. Каждый объект содержит:
+
 \begin{itemize}
   \item \texttt{type}: идентификатор типа элемента (например, \texttt{input\_field}, \texttt{array\_fields}),
   \item \texttt{props}: набор свойств, необходимых для рендеринга и обработки (имя поля, текст метки, дополнительные параметры).
@@ -53,7 +55,8 @@ export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
 Пример использования компонента \texttt{FormBuilder} приведён в листинге~\ref{lst:formbuilder-usage}.
 
 \begin{lstlisting}[caption=Использование \texttt{FormBuilder},label=lst:formbuilder-usage]
-<FormBuilder schema={inviteTeacherScheme()} onChange={onChangeFormData}/>
+<FormBuilder schema={inviteTeacherScheme()} 
+			 onChange={onChangeFormData}/>
 \end{lstlisting}
 
 Компонент \texttt{FormBuilder} автоматически распределяет данные между полями и собирает итоговый объект формы, передавая его через \texttt{onChange}.
@@ -84,12 +87,15 @@ const schema: INPUT_FIELD_SCHEMA = {
 
 \paragraph{ARRAY\_FIELDS\_SCHEMA}
 Тип \texttt{array\_fields} предназначен для формирования массива однотипных входных полей. Все вложенные \texttt{input\_field} будут собраны в массив.
+
 \begin{itemize}
   \item \texttt{name}: имя массива в итоговой модели,
   \item \texttt{children}: массив схем элементов, входящих в каждую запись.
 \end{itemize}
 
-\begin{lstlisting}[caption={Пример ARRAY\_FIELDS\_SCHEMA}]
+Пример схемы показан в листинге~\ref{lst:array-fields-schema}.
+
+\begin{lstlisting}[caption={Пример \texttt{ARRAY\_FIELDS\_SCHEMA}},label={lst:array-fields-schema}]
 const schema: ARRAY_FIELDS_SCHEMA = [
   {
     type: 'array_fields',
@@ -111,12 +117,15 @@ const schema: ARRAY_FIELDS_SCHEMA = [
 
 \paragraph{FORM\_WRAPPER\_SCHEMA}
 Тип \texttt{form\_wrapper} служит для группировки полей без сброса счётчика массивов. Внутренние поля записываются как вложенный объект.
+
 \begin{itemize}
   \item \texttt{name}: имя ключа в итоговом объекте,
   \item \texttt{children}: схема вложенных элементов.
 \end{itemize}
 
-\begin{lstlisting}[caption={Пример FORM\_WRAPPER\_SCHEMA}]
+Пример схемы показан в листинге~\ref{lst:form-wrapper-schema}.
+
+\begin{lstlisting}[caption={Пример \texttt{FORM\_WRAPPER\_SCHEMA}},label={lst:form-wrapper-schema}]
 const schema: FORM_WRAPPER_SCHEMA = [{
   type: 'form_wrapper',
   props: {
@@ -136,9 +145,9 @@ const schema: FORM_WRAPPER_SCHEMA = [{
 \end{lstlisting}
 
 \paragraph{BLOCK\_WRAPPER\_SCHEMA}
-Тип \texttt{block\_wrapper} позволяет визуально группировать элементы без изменения структуры данных: поля в нём обрабатываются как часть текущего массива или объекта.
+Тип \texttt{block\_wrapper} позволяет визуально группировать элементы без изменения структуры данных: поля в нём обрабатываются как часть текущего массива или объекта. Пример схемы показан в листинге~\ref{lst:block-wrapper-schema}.
 
-\begin{lstlisting}[caption={Пример BLOCK\_WRAPPER\_SCHEMA}]
+\begin{lstlisting}[caption={Пример \texttt{BLOCK\_WRAPPER\_SCHEMA}},label={lst:block-wrapper-schema}]
 const schema: BLOCK_WRAPPER_SCHEMA = [
   {
     type: 'block_wrapper',
@@ -158,9 +167,9 @@ const schema: BLOCK_WRAPPER_SCHEMA = [
 \end{lstlisting}
 
 \paragraph{REACT\_NODE\_SCHEMA}
-Тип \texttt{react\_node} предназначен для вставки произвольного React-элемента в форму.
+Тип \texttt{react\_node} предназначен для вставки произвольного React-элемента в форму. Пример схемы показан в листинге~\ref{lst:react-node-schema}.
 
-\begin{lstlisting}[caption={Пример REACT\_NODE\_SCHEMA}]
+\begin{lstlisting}[caption={Пример \texttt{REACT\_NODE\_SCHEMA}},label={lst:react-node-schema}]
 const schema: REACT_NODE_SCHEMA = [
   {
     type: 'react_node',
