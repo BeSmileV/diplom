@@ -211,3 +211,23 @@ sorting=none,
 }
 \makeatother
 
+
+\newfontfamily\jetbrainsmono{JetBrains Mono}[
+  Scale=1.0,
+  ItalicFont={JetBrains Mono Italic},
+  BoldFont={JetBrains Mono Bold},
+  BoldItalicFont={JetBrains Mono Bold Italic},
+]
+
+% 2) Разрешает произвольные размеры шрифта
+\usepackage{fix-cm}
+
+% 3) Переопределяем \textit
+\makeatletter
+\DeclareTextFontCommand{\textit}{%
+  \jetbrainsmono      % переключаем на JetBrains Mono
+  \fontsize{14}{17}\selectfont % размер 14pt и leading 17pt
+  \itshape           % включаем курсив
+}
+\makeatother
+
