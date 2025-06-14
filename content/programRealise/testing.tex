@@ -4,7 +4,7 @@
 
 \subsubsection{Покрытие кода в приложении}
 
-\begin{table}[H]
+\begin{table}[h]
   \centering
     \small
   \caption{Покрытие кода front-end приложения.}
@@ -24,16 +24,16 @@
 \noindent
 В таблице~\ref{tab:app-coverage} приведены четыре основные метрики покрытия:
 \begin{itemize}
-  \item \textbf{\%Stmts} (Statements) — процент операторов кода, выполненных в ходе тестов;
-  \item \textbf{\%Branch} (Branches) — процент ветвей условных операторов, затронутых тестами;
-  \item \textbf{\%Funcs} (Functions) — процент функций, вызванных хотя бы одним тестом;
-  \item \textbf{\%Lines} (Lines) — процент строк кода, исполненных тестами.
+  \item \%Stmts (Statements) — процент операторов кода, выполненных в ходе тестов;
+  \item \%Branch (Branches) — процент ветвей условных операторов, затронутых тестами;
+  \item \%Funcs (Functions) — процент функций, вызванных хотя бы одним тестом;
+  \item \%Lines (Lines) — процент строк кода, исполненных тестами.
 \end{itemize}
-Для ключевых модулей (например, \texttt{mergeMessages.ts}) все метрики равны 100\,\%, а в функциях преобразования текста остаются непротестированные ветви и строки (строки 9, 13, 15–22 в \texttt{processTextToTiptap.ts} и строка 2 в \texttt{processTiptapToText.ts}).
+Для ключевых модулей (например, \textit{mergeMessages.ts}) все метрики равны 100\,\%, а в функциях преобразования текста остаются непротестированные ветви и строки (строки 9, 13, 15–22 в \textit{processTextToTiptap.ts} и строка 2 в \textit{processTiptapToText.ts}).
 
 \subsubsection{Покрытие кода в отдельной библиотеке}
 
-\begin{table}[H]
+\begin{table}[h]
   \small
   \centering
   \caption{Покрытие кода библиотеки компонентов.}
@@ -49,20 +49,20 @@
 \end{table}
 
 \noindent
-В таблице~\ref{tab:lib-coverage} показано, что основные утилитные функции библиотеки (\texttt{getDeepValue}, \texttt{setDeepValue}, \texttt{changeInterval}) полностью или почти полностью покрыты, тогда как файлы без тестов в отчёте не отображаются.
+В таблице~\ref{tab:lib-coverage} показано, что основные утилитные функции библиотеки (\textit{getDeepValue}, \textit{setDeepValue}, \textit{changeInterval}) полностью или почти полностью покрыты, тогда как файлы без тестов в отчёте не отображаются.
 
 \subsubsection{Методы тестирования}
 
 \begin{itemize}
-  \item \textbf{Модульное тестирование (unit testing):}  
+  \item Модульное тестирование (unit testing):
     для каждой функции и компонента написаны независимые тесты, покрывающие:
     граничные и некорректные входные данные (undefined, пустые массивы), типичные сценарии и пограничные случаи.
-  \item \textbf{TDD–подход (Test–Driven Development):}  
-    реализация функций по циклу «\texttt{test → fail} → написать минимальный код → \texttt{test → pass} → рефакторинг».
-  \item \textbf{Покрытие ветвлений (branch coverage):}  
-    каждый сценарий условных операторов (\texttt{if/else}, тернарные выражения, \texttt{switch}) проверяется отдельными тестами.
-  \item \textbf{Round-trip-тесты:}  
-    для преобразований «текст → HTML → текст» (функции \texttt{processTextToTiptap} / \texttt{processTiptapToText}) проверяется обратимость и корректность в сложных случаях (вложенные теги, переносы строк).
-  \item \textbf{Инструментация и сбор покрытия:}  
-    запуск командой \texttt{npx jest --coverage} автоматически оборачивает счётчиками все исходники и собирает метрики Statements, Branches, Functions и Lines.
+  \item TDD–подход (Test–Driven Development):
+    реализация функций по циклу «\textit{test → fail} → написать минимальный код → \textit{test → pass} → рефакторинг».
+  \item Покрытие ветвлений (branch coverage):
+    каждый сценарий условных операторов (\textit{if/else}, тернарные выражения, \textit{switch}) проверяется отдельными тестами.
+  \item Round-trip-тесты:
+    для преобразований «текст → HTML → текст» (функции \textit{processTextToTiptap} / \textit{processTiptapToText}) проверяется обратимость и корректность в сложных случаях (вложенные теги, переносы строк).
+  \item Инструментация и сбор покрытия:
+    запуск командой \textit{npx jest --coverage} автоматически оборачивает счётчиками все исходники и собирает метрики Statements, Branches, Functions и Lines.
 \end{itemize}

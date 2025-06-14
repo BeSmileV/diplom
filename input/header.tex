@@ -1,3 +1,6 @@
+\PassOptionsToPackage{hidelinks}{hyperref}
+
+
 %%% Здесь выбираются необходимые графы
 \documentclass[russian,utf8,pointsection,nocolumnsxix,nocolumnxxxi,nocolumnxxxii]{eskdtext}
 \usepackage{fontspec}
@@ -193,15 +196,15 @@ sorting=none,
 %%% Настройка отступов для заголовков
 \usepackage{titlesec}
 % Section: 1cm слева, 14pt сверху, 8pt снизу
-\titleformat{\section}[block]{\normalfont\bfseries}{\thesection}{1em}{}
+\titleformat{\section}[block]{\normalfont\bfseries}{\thesection}{0.5em}{}
 \titlespacing*{\section}{1cm}{14pt}{8pt}
 
 % Subsection
-\titleformat{\subsection}[block]{\normalfont\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsection}[block]{\normalfont\bfseries}{\thesubsection}{0.5em}{}
 \titlespacing*{\subsection}{1cm}{12pt}{6pt}
 
 % Subsubsection
-\titleformat{\subsubsection}[block]{\normalfont\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\subsubsection}[block]{\normalfont\bfseries}{\thesubsubsection}{0.5em}{}
 \titlespacing*{\subsubsection}{1cm}{10pt}{4pt}
 
 %%% Убираем заголовок "Содержание" у оглавления
@@ -219,15 +222,54 @@ sorting=none,
   BoldItalicFont={JetBrains Mono Bold Italic},
 ]
 
-% 2) Разрешает произвольные размеры шрифта
-\usepackage{fix-cm}
+\usepackage{titletoc}
+% ----------------------------
+% 1) Настройка секций
+% ----------------------------
+\titlecontents{section}% уровень — section
+  [0.5cm]                        % отступ слева
+  {}                           % код перед строкой
+  {\contentslabel{0.8em}\hspace{0cm}} % нумерация шириной 1.8em + 0.4em после неё
+  {}                           % для ненумерованных
+  {\titlerule*[0.5em]{.}\contentspage}% dot-линия (0.5em между точками) + номер страницы
+  []
 
-% 3) Переопределяем \textit
-\makeatletter
-\DeclareTextFontCommand{\textit}{%
-  \jetbrainsmono      % переключаем на JetBrains Mono
-  \fontsize{14}{17}\selectfont % размер 14pt и leading 17pt
-  \itshape           % включаем курсив
+% ----------------------------
+% 2) (по желанию) subsection/subsubsection
+% ----------------------------
+\titlecontents{subsection}
+  [0.8cm]                      % дополнительный отступ для вложенности
+  {}%
+  {\contentslabel{1.0em}\hspace{0.5cm}}
+  {}%
+  {\titlerule*[0.3em]{.}\contentspage}
+  []
+
+\titlecontents{subsubsection}
+  [1.8cm]
+  {}%
+  {\contentslabel{2em}\hspace{0.3cm}}
+  {}%
+  {\titlerule*[0.2em]{.}\contentspage}
+  []
+  
+\usepackage{caption,newfloat}
+\DeclareFloatingEnvironment[
+  fileext=lol,
+  name=Листинг,
+  listname=Список\,листингов
+]{listing}
+
+% 1) формат «Листинг <номер> – »
+\DeclareCaptionLabelFormat{dash}{#1~#2~–~}
+
+% 2) настраиваем подписи именно для окружения listing
+\captionsetup[lstlisting]{%
+  labelformat=dash,    % наш «–» вместо «:»
+  labelsep=none,       % разделитель мы уже вставили в labelformat
+  font=normal,          % маленький шрифт, как для рисунков/таблиц
+  justification=raggedright, % выравнивание по левому краю
+  singlelinecheck=false % даже в одну строку выравнивать по raggedright
 }
-\makeatother
 
+\usepackage[hidelinks]{hyperref}
