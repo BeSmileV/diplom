@@ -20,6 +20,7 @@
 % Цветовая палитра
 \usecolortheme{spruce}
 \useinnertheme{circles}
+\usepackage{booktabs}
 
 % Стиль заголовков
 \setbeamerfont{frametitle}{size=\large, series=\bfseries}
@@ -38,33 +39,32 @@
 \vspace{1em}
 \centering
 {\small
-МИНИСТЕРСТВО ОБРАЗОВАНИЯ И НАУКИ РФ \\
-Федеральное государственное бюджетное образовательное учреждение высшего образования \\
-\textbf{«Белгородский государственный технологический университет им. В.Г. Шухова»} \\
-\vspace{0.25em}
-Кафедра программного обеспечения вычислительной техники и автоматизированных систем
+Министерство науки и высшего образования РФ Федеральное государственное бюджетное образовательное учреждение высшего образования <<Белгородский государственный технологический университет им. В.Г.~Шухова>>\\
 }
 
-\vspace{1em}
+\vspace{2em}
 
 {\large \textbf{ВЫПУСКНАЯ КВАЛИФИКАЦИОННАЯ РАБОТА}}
 
-\vspace{1em}
+\vspace{3em}
 
 \begin{minipage}{0.95\textwidth}
 \centering
 «\textbf{Разработка front-end Web-приложения – учебной среды с чатами и AI-анализом кода лабораторных работ}»
 \end{minipage}
 
-\vspace{1em}
+\vspace{2em}
 {\RaggedRight
 \begin{minipage}{0.95\textwidth}
 \footnotesize
-\textbf{Автор работы:} Бондаренко Сергей Владимирович \\[0.25em]
-\textbf{Направление подготовки:} 09.03.04 «Программная инженерия» \\[0.25em]
+\textbf{Автор работы:} Бондаренко Сергей Владимирович,  студент группы ПВ-212 \\[0.25em]
 \textbf{Руководитель:} Мельников Антон Борисович, руководитель департамента автоматизации бизнеса ООО «Технологии надежности»
 \end{minipage}
 }
+
+\vspace{2 em}
+
+{\small Белгород 2025 г.}
 \end{frame}
 
 
@@ -168,11 +168,11 @@ Codility         & -- & -- & +  \\
 \end{columns}
 \end{frame}
 
-\begin{frame}{Взаимодействие администратора с web-приложением}
+\begin{frame}{Диаграмма взаимодействия администратора с web-приложением}
     \centering
     \includegraphics[width=\linewidth]{static/AdminFlowchart.png}
-    \vspace{0.5em}
-    {\small Диаграмма действий администратора}
+%    \vspace{0.5em}
+%    {\small Диаграмма действий администратора}
 \end{frame}
 
 %\begin{frame}{Взаимодействие преподавателя с web-приложением}
@@ -189,11 +189,11 @@ Codility         & -- & -- & +  \\
 %    {\small Диаграмма действий студента}
 %\end{frame}
 
-\begin{frame}{Взаимодействие студента и преподавателя с web-приложением}
+\begin{frame}{Диаграмма взаимодействия студента и преподавателя с web-приложением}
     \centering
     \includegraphics[width=\linewidth]{static/TeacherStudentFlowchart.png}
-    \vspace{0.5em}
-    {\small Диаграмма действий студента и преподавателя}
+%    \vspace{0.5em}
+%    {\small Диаграмма действий студента и преподавателя}
 \end{frame}
 
 %\begin{frame}{Создание приглашения пользователей}
@@ -230,7 +230,7 @@ Codility         & -- & -- & +  \\
 %\end{columns}
 %\end{frame}
 
-\begin{frame}{Создание задачи}
+\begin{frame}{Процесс создания задачи}
 \vspace{0.5em}
 
 \begin{columns}
@@ -248,12 +248,12 @@ Codility         & -- & -- & +  \\
 \end{frame}
 
 
-\begin{frame}{Отправка задания на проверку}
+\begin{frame}{Диаграмма взаимодействия студента с заданием}
 \vspace{0.5em}
 
 \centering
 \includegraphics[width=0.75\linewidth]{static/TaskSendStudentDiagram.png} \\
-\small Диаграмма взаимодействия при просмотре задания конкретного студента
+%\small Диаграмма взаимодействия при просмотре задания конкретного студента
 \end{frame}
 
 %\begin{frame}{Интерфейс задания определённого студента}
@@ -273,7 +273,7 @@ Codility         & -- & -- & +  \\
 %\end{columns}
 %\end{frame}
 
-\begin{frame}{Диаграммы взаимодействия с чатами}
+\begin{frame}{Диаграммы взаимодействия пользователя с чатами}
 \vspace{0.5em}
 
 \begin{columns}
@@ -290,7 +290,7 @@ Codility         & -- & -- & +  \\
 \end{columns}
 \end{frame}
 
-\begin{frame}{Диаграммы отправки и получения сообщений}
+\begin{frame}{Диаграммы отправки и получения сообщений пользователем}
 \vspace{0.5em}
 
 \begin{columns}
@@ -324,7 +324,7 @@ Codility         & -- & -- & +  \\
 %\end{columns}
 %\end{frame}
 
-\begin{frame}{Переподключение WebSocket: диаграмма последовательности}
+\begin{frame}{Диаграмма взаимодействия клиентской части с WebSocket}
 \small
 \justifying
 При истечении срока действия access-токена реализован механизм его автоматического обновления и повторного переподключения WebSocket-соединения.
@@ -367,125 +367,148 @@ Codility         & -- & -- & +  \\
 %\end{columns}
 %\end{frame}
 
-\begin{frame}{Тестирование}
+\begin{frame}{Методы тестирования}
 \small
 \justifying
 
-\begin{columns}
-  % Левая колонка: описание модулей (с выравниванием по верху)
-  \begin{column}{0.45\textwidth}
-    В ходе работы были протестированы следующие модули:
-    \begin{itemize}
-      \item Web-приложение:
-      \begin{itemize}
-        \item Модуль чатов
-        \item Модуль редактора текста
-      \end{itemize}
-      \item UI-библиотека:
-      \begin{itemize}
-        \item Модуль создания форм
-        \item Модуль пикера даты и времени
-      \end{itemize}
-    \end{itemize}
-  \end{column}
-
-  % Правая колонка: две картинки, расположенные вертикально (тоже выравнена по верху)
-  \begin{column}{0.55\textwidth}
-    \centering
-    % Первая картинка
-    \includegraphics[height=3cm]{static/ProjectTests.png} \\
-    \scriptsize Скриншот результатов тестирования Web-приложения
-
-    \vspace{1em} % интервал между двумя картинками
-
-    % Вторая картинка
-    \includegraphics[height=3cm]{static/LibTests.png} \\
-    \scriptsize Скриншот результатов тестирования UI-библиотеки
-  \end{column}
-\end{columns}
+\begin{itemize}
+  \item Модульное тестирование (unit testing):
+    для каждой функции и компонента написаны независимые тесты, покрывающие:
+    граничные и некорректные входные данные (undefined, пустые массивы), типичные сценарии и пограничные случаи.
+  \item TDD–подход (Test–Driven Development):
+    реализация функций по циклу «\textit{test → fail} → написать минимальный код → \textit{test → pass} → рефакторинг».
+  \item Покрытие ветвлений (branch coverage):
+    каждый сценарий условных операторов (\textit{if/else}, тернарные выражения, \textit{switch}) проверяется отдельными тестами.
+\end{itemize}
 \end{frame}
 
+\begin{frame}{Метрики тестирования}
+\small
+\justifying
 
+\begin{table}[h]
+\centering
+\scriptsize
+{\small Покрытие кода приложения.}
+\vspace{1em}
+\begin{tabular}{lrrrr}
+  	\toprule
+  	\textbf{File}                & \textbf{\%Stmts} & \textbf{\%Branch} & \textbf{\%Funcs} & \textbf{\%Lines} \\ \midrule
+  	All files                    &            95.65 &             77.77 &           100.00 &           100.00 \\
+  	features/Chats/lib           &           100.00 &            100.00 &           100.00 &           100.00 \\
+  	\quad mergeMessages.ts       &           100.00 &            100.00 &           100.00 &           100.00 \\
+  	shared/ui/TextEditor/lib     &            90.47 &             68.42 &           100.00 &           100.00 \\
+  	\quad processTextToTiptap.ts &            94.11 &             72.22 &           100.00 &           100.00 \\
+  	\quad processTiptapToText.ts &            75.00 &              0.00 &           100.00 &           100.00 \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\small
+\centering
+{\small Покрытие кода библиотеки компонентов.}
+\vspace{1em}
+\begin{tabular}{lrrrr}
+  	\toprule
+  	\textbf{File}                           & \textbf{\%Stmts} & \textbf{\%Branch} & \textbf{\%Funcs} & \textbf{\%Lines} \\ \midrule
+  	All files                               &            52.89 &             48.76 &            20.68 &            52.65 \\
+  	lib/dict/getDeepValue.ts                &            86.36 &             73.33 &           100.00 &            85.71 \\
+  	lib/dict/setDeepValue.ts                &           100.00 &            100.00 &           100.00 &           100.00 \\
+  	ui/DateTimePicker/lib/changeInterval.ts &           100.00 &             96.29 &           100.00 &           100.00 \\ \bottomrule
+\end{tabular}
+\end{table}
+\end{frame}
 
 
 \begin{frame}{Заключение}
 \small
-В ходе выполнения выпускной квалификационной работы поставленные задачи были успешно решены. Результатом стало веб-приложение с системой управления заданиями, поддерживающей автоматическую проверку решений студентов с помощью ИИ, а также чатами для общения в реальном времени через WebSocket.
+В ходе выполнения выпускной квалификационной работы:
+
+\begin{enumerate}
+	\item Проведен анализ существующих образовательных решений.
+	\item Определена архитектуру Web-приложения и технологический стек.
+	\item Разработан пользовательский интерфейс.
+	\item Реализованы модули для управления учебными структурами, заданиями и системой общения.
+	\item Интегрирован модуль автоматической проверки решений с использованием ИИ.
+	\item Проведено тестирование бизнес-логики Web-приложения.
+\end{enumerate}
+
+Результатом стало Web-приложение с системой управления заданиями, поддерживающей автоматическую проверку решений студентов с помощью ИИ, а также чатами для общения в реальном времени через WebSocket.
 \end{frame}
 
 
-\begin{frame}{Демонстрация интерфейса создания приглашения пользователей}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/InviteStudentPage.png} \\
-        \small Форма приглашения студента
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/InviteTeacherPage.png} \\
-        \small Форма приглашения преподавателя
-    \end{column}
-\end{columns}
-\end{frame}
-
-
-\begin{frame}{Демонстрация интерфейса Регистрации}
-\begin{columns}
-    \begin{column}{0.45\textwidth}
-        \centering
-        \includegraphics[height=5cm]{static/RegTeacherPage.png} \\
-        \small Регистрация преподавателя
-    \end{column}
-    \begin{column}{0.45\textwidth}
-        \centering
-        \includegraphics[height=5cm]{static/RegStudentPage.png} \\
-        \small Регистрация студента
-    \end{column}
-\end{columns}
-\end{frame}
-
-
-\begin{frame}{Демонстрация интерфейса списка и просмотра заданий}
-\vspace{0.5em}
-
-\begin{columns}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.9\linewidth]{static/TaskListTeacher.png} \\
-        \small Список заданий
-
-        \vspace{1em}
-
-        \includegraphics[width=0.9\linewidth]{static/TaskTeacherDetail.png} \\
-        \small Просмотр задания преподавателем
-    \end{column}
-    \begin{column}{0.5\textwidth}
-        \centering
-        \includegraphics[width=0.95\linewidth]{static/TaskStudentNotSend.png} \\
-        \small Просмотр задания студентом
-    \end{column}
-\end{columns}
-\end{frame}
-
-\begin{frame}{Демонстрация интерфейса создания чатов}
-\small
-\justifying
-
-\begin{columns}
-  \begin{column}{0.5\textwidth}
-    \centering
-    \includegraphics[width=0.95\linewidth]{static/ChatsStudentCreateChat.png} \\
-    \small Личный чат
-  \end{column}
-  \begin{column}{0.5\textwidth}
-    \centering
-    \includegraphics[width=0.95\linewidth]{static/ChatsTeacherCreateGroupChat.png} \\
-    \small Групповой чат
-  \end{column}
-\end{columns}
-\end{frame}
+%\begin{frame}{Демонстрация интерфейса создания приглашения пользователей}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/InviteStudentPage.png} \\
+%        \small Форма приглашения студента
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/InviteTeacherPage.png} \\
+%        \small Форма приглашения преподавателя
+%    \end{column}
+%\end{columns}
+%\end{frame}
+%
+%
+%\begin{frame}{Демонстрация интерфейса Регистрации}
+%\begin{columns}
+%    \begin{column}{0.45\textwidth}
+%        \centering
+%        \includegraphics[height=5cm]{static/RegTeacherPage.png} \\
+%        \small Регистрация преподавателя
+%    \end{column}
+%    \begin{column}{0.45\textwidth}
+%        \centering
+%        \includegraphics[height=5cm]{static/RegStudentPage.png} \\
+%        \small Регистрация студента
+%    \end{column}
+%\end{columns}
+%\end{frame}
+%
+%
+%\begin{frame}{Демонстрация интерфейса списка и просмотра заданий}
+%\vspace{0.5em}
+%
+%\begin{columns}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.9\linewidth]{static/TaskListTeacher.png} \\
+%        \small Список заданий
+%
+%        \vspace{1em}
+%
+%        \includegraphics[width=0.9\linewidth]{static/TaskTeacherDetail.png} \\
+%        \small Просмотр задания преподавателем
+%    \end{column}
+%    \begin{column}{0.5\textwidth}
+%        \centering
+%        \includegraphics[width=0.95\linewidth]{static/TaskStudentNotSend.png} \\
+%        \small Просмотр задания студентом
+%    \end{column}
+%\end{columns}
+%\end{frame}
+%
+%\begin{frame}{Демонстрация интерфейса создания чатов}
+%\small
+%\justifying
+%
+%\begin{columns}
+%  \begin{column}{0.5\textwidth}
+%    \centering
+%    \includegraphics[width=0.95\linewidth]{static/ChatsStudentCreateChat.png} \\
+%    \small Личный чат
+%  \end{column}
+%  \begin{column}{0.5\textwidth}
+%    \centering
+%    \includegraphics[width=0.95\linewidth]{static/ChatsTeacherCreateGroupChat.png} \\
+%    \small Групповой чат
+%  \end{column}
+%\end{columns}
+%\end{frame}
 
 \end{document}
