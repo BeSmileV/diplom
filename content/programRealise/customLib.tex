@@ -11,22 +11,15 @@
 \end{itemize}
 Применение данной библиотеки ускоряет процессы разработки и упрощает поддержку интерфейса, так как все ключевые решения собраны в централизованном модуле с единым API и консистентной документацией.
 
-\subsubsection{Компонент \textit{FormBuilder}: концепция и API}
+\subsubsection{Компонент \textit{FormBuilder}}
 Ключевым элементом библиотеки является компонент \textit{FormBuilder}. Он реализует маршрутизацию данных и событий между декларативной схемой формы и её полями. Основные принципы работы:
 \begin{enumerate}
   \item Пользователь задаёт схему параметров формы, представляющую собой массив объектов с полем \textit{type} и соответствующим набором \textit{props}.
   \item \textit{FormBuilder} инициализирует внутреннее состояние формы и передаёт каждому полю текущие значения и функции обработки изменений.
-  \item При срабатывании события изменения значения поле уведомляет \textit{FormBuilder}, который обновляет общую модель данных и вызывает коллбэк \textit{onChange}.
+  \item При срабатывании события изменения значения поле уведомляет \textit{FormBuilder}, который обновляет общую модель данных и вызывает функцию обратного вызова \textit{onChange}.
 \end{enumerate}
 
-Схема формы описывается функцией, возвращающей массив объектов. Каждый объект содержит:
-
-\begin{itemize}
-  \item \textit{type}: идентификатор типа элемента (например, \textit{input\_field}, \textit{array\_fields}),
-  \item \textit{props}: набор свойств, необходимых для рендеринга и обработки (имя поля, текст метки, дополнительные параметры).
-\end{itemize}
-
-Пример описания схемы формы приведён в листинге~\ref{lst:form-scheme}.
+Схема формы описывается функцией, возвращающей массив объектов. Каждый объект содержит \textit{type} — идентификатор типа элемента (например, \textit{input\_field} или \textit{array\_fields}), а также \textit{props} — набор свойств, необходимых для рендеринга и обработки (таких как имя поля, текст метки и дополнительные параметры). Пример описания схемы формы приведён в листинге~\ref{lst:form-scheme}.
 
 \begin{lstlisting}[caption=Пример описания схемы формы,label=lst:form-scheme]
 export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
@@ -62,17 +55,7 @@ export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
 \subsubsection{Типы элементов схемы и их поведение}
 Ниже приведены ключевые типы схем, поддерживаемые \textit{FormBuilder}, и описание их функциональности.
 
-
-Схема \textit{INPUT\_FIELD\_SCHEMA} отвечает за отображение и управление единичным полем ввода.
-\begin{itemize}
-  \item \textit{name}: ключ в итоговом объекте данных,
-  \item \textit{labelText}: отображаемая метка поля,
-  \item \textit{hintText} (опционально): текст подсказки под полем,
-  \item \textit{type} (опционально): уточняет тип поля (например, \textit{select}, \textit{datetime}),
-  \item \textit{ownerInputComponent} (опционально): пользовательский компонент, принимающий \textit{value}, \textit{onChange}, \textit{isError}, \textit{onBlur}.
-\end{itemize}
-
-Пример использования схемы представлен в листинге~\ref{lst:input-fields-schema}.
+Схема \textit{INPUT\_FIELD\_SCHEMA} отвечает за отображение и управление единичным полем ввода. Она включает обязательное поле \textit{name} (ключ в итоговом объекте данных), а также опциональные параметры: \textit{labelText} (отображаемая метка поля), \textit{hintText} (текст подсказки под полем), \textit{type} (уточнение типа поля, например \textit{select} или \textit{datetime}) и \textit{ownerInputComponent} (пользовательский компонент, принимающий \textit{value}, \textit{onChange}, \textit{isError} и \textit{onBlur}). Пример использования схемы представлен в листинге~\ref{lst:input-fields-schema}.
 
 \begin{lstlisting}[caption={Пример INPUT\_FIELD\_SCHEMA},label={lst:input-fields-schema}]
 const schema: INPUT_FIELD_SCHEMA = {
@@ -85,14 +68,7 @@ const schema: INPUT_FIELD_SCHEMA = {
 };
 \end{lstlisting}
 
-Схема \textit{ARRAY\_FIELDS\_SCHEMA} предназначена для формирования массива однотипных входных полей. Все вложенные \textit{input\_field} будут собраны в массив.
-
-\begin{itemize}
-  \item \textit{name}: имя массива в итоговой модели,
-  \item \textit{children}: массив схем элементов, входящих в каждую запись.
-\end{itemize}
-
-Пример схемы показан в листинге~\ref{lst:array-fields-schema}.
+Схема \textit{ARRAY\_FIELDS\_SCHEMA} предназначена для формирования массива однотипных входных полей, где все вложенные элементы \textit{input\_field} объединяются в массив. Обязательными параметрами схемы являются: \textit{name} (имя массива в итоговой модели данных) и \textit{children} (массив схем элементов, составляющих каждую отдельную запись). Пример использования данной схемы представлен в листинге~\ref{lst:array-fields-schema}.
 
 \begin{lstlisting}[caption={Пример \textit{ARRAY\_FIELDS\_SCHEMA}},label={lst:array-fields-schema}]
 const schema: ARRAY_FIELDS_SCHEMA = [
@@ -114,14 +90,7 @@ const schema: ARRAY_FIELDS_SCHEMA = [
 ];
 \end{lstlisting}
 
-Схема \textit{FORM\_WRAPPER\_SCHEMA} служит для группировки полей без сброса счётчика массивов. Внутренние поля записываются как вложенный объект.
-
-\begin{itemize}
-  \item \textit{name}: имя ключа в итоговом объекте,
-  \item \textit{children}: схема вложенных элементов.
-\end{itemize}
-
-Пример схемы показан в листинге~\ref{lst:form-wrapper-schema}.
+Схема \textit{FORM\_WRAPPER\_SCHEMA} обеспечивает группировку полей без сброса индексов массивов, сохраняя вложенные элементы как объект. Обязательными параметрами выступают \textit{name} (ключ в результирующем объекте) и \textit{children} (схема вложенных элементов). Пример реализации приведён в листинге~\ref{lst:form-wrapper-schema}.
 
 \begin{lstlisting}[caption={Пример \textit{FORM\_WRAPPER\_SCHEMA}},label={lst:form-wrapper-schema}]
 const schema: FORM_WRAPPER_SCHEMA = [{
