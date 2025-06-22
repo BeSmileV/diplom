@@ -77,22 +77,6 @@
 	\setcounter{subsubsectcount}{0}%
 }
 
-% 3) сохраняем оригинальную команду
-%\let\origsubsubsection\subsubsection
-%
-%% 4) переопределяем логику
-%\renewcommand{\subsubsection}[1]{%
-%	\stepcounter{subsubsectcount}%
-%	\ifnum\value{subsubsectcount}>6
-%	% после 5-й — звёздочная версия (без номера и без ToC)
-%	\origsubsubsection*{#1}%
-%	\else
-%	% первые 5 — как обычно
-%	\origsubsubsection{#1}%
-%	\fi
-%}
-%%% ====================================
-
 %%% 1) Подключаем пакеты (у вас уже есть)
 \usepackage{listings}
 \usepackage{xcolor}
@@ -179,15 +163,11 @@ sorting=none,
 \setlist[enumerate,1]{label=\arabic*), leftmargin=1cm}
 
 % Для второго уровня (если нужно)
-\setlist[enumerate,2]{label=\alph*), leftmargin=1cm}
+\setlist[enumerate,2]{label=\arabic{enumi}.\arabic{enumii},, leftmargin=1cm}
 
 % Для itemize (если нужно настроить)
-\setlist[itemize]{leftmargin=1cm}
-
-%%% Настройка основного шрифта и интервала
-%\usepackage{setspace} % Добавляем пакет для интервалов
-%\onehalfspacing       % Полуторный межстрочный интервал
-%\renewcommand{\normalsize}{\fontsize{14pt}{16pt}\selectfont} % 14pt с интервалом 1.5
+\setlist[itemize,1]{leftmargin=1cm}
+\setlist[itemize,2]{label=\arabic{enumi}.\arabic{enumii}), leftmargin=1cm}
 
 %%% Абзацный отступ (уже есть, но дублируем для надежности)
 \setlength{\parindent}{1cm} 
