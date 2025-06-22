@@ -8,9 +8,9 @@
 \renewcommand{\ESKDcolumnXfIVname}{\fontsize{9pt}{11pt}\selectfont\itshape Консул.}
 \renewcommand{\ESKDcolumnXfVIname}{\fontsize{9pt}{11pt}\selectfont\itshape Зав. Каф.}
 
-\ESKDauthor{\fontsize{8pt}{10pt}\selectfont\itshape Бондаренко С. В.}
+\ESKDauthor{\fontsize{8pt}{10pt}\selectfont\itshape Бондаренко С.В.}
 \ESKDchecker{\fontsize{8pt}{10pt}\selectfont\itshape Мельников А.Б. }
-\ESKDnormContr{\fontsize{8pt}{10pt}\selectfont\itshape  Н.Кнтр.~И.О. }
+\ESKDnormContr{\fontsize{8pt}{10pt}\selectfont\itshape  Осипов~О.В. }
 \ESKDapprovedBy{\fontsize{8pt}{10pt}\selectfont\itshape Поляков В.М.}
 
 %%% Для титульника
@@ -36,3 +36,15 @@
 \renewcommand{\ESKDcolumnII}[1]{%
   \oldESKDcolumnII{\fontsize{10pt}{12pt}\selectfont\itshape #1}%
 }
+
+
+%\usepackage{letltxmacro}
+%\makeatletter
+%  % сохраним оригиналы
+%  \LetLtxMacro{\origESKDstyle}{\ESKDstyle}
+%  \LetLtxMacro{\origESKDthisStyle}{\ESKDthisStyle}
+%
+%  % теперь переопределим так, чтобы любой вызов шел в empty
+%  \renewcommand{\ESKDstyle}[1]{\origESKDstyle{empty}}
+%  \renewcommand{\ESKDthisStyle}[1]{\origESKDstyle{empty}}
+%\makeatother
