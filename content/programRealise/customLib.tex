@@ -18,7 +18,7 @@
   \item При срабатывании события изменения значения поле уведомляет компонент \textit{FormBuilder}, который обновляет общую модель данных и вызывает функцию обратного вызова \textit{onChange}.
 \end{enumerate}
 
-Схема формы описывается функцией, возвращающей массив объектов. Каждый объект содержит \textit{type} — идентификатор типа элемента (например, \textit{input\_field} или \textit{array\_fields}), а также \textit{props} — набор свойств, необходимых для рендеринга и обработки (таких как имя поля, текст метки и дополнительные параметры). Пример описания схемы формы приведён в листинге~\ref{lst:form-scheme}.
+Схема формы описывается функцией, возвращающей массив объектов. Каждый объект содержит поле \textit{type} — идентификатор типа элемента (например, \textit{input\_field} или \textit{array\_fields}), а также \textit{props} — набор свойств, необходимых для рендеринга и обработки (таких как имя поля, текст метки и дополнительные параметры). Пример описания схемы формы приведён в листинге~\ref{lst:form-scheme}.
 
 \begin{lstlisting}[caption=Пример описания схемы формы,label=lst:form-scheme]
 export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
@@ -44,7 +44,7 @@ export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
 
 Пример использования компонента \textit{FormBuilder} приведён в листинге~\ref{lst:formbuilder-usage}.
 
-\begin{lstlisting}[caption=Использование \textit{FormBuilder},label=lst:formbuilder-usage]
+\begin{lstlisting}[caption=Использование компонента \textit{FormBuilder},label=lst:formbuilder-usage]
 <FormBuilder schema={inviteTeacherScheme()} 
 			 onChange={onChangeFormData}/>
 \end{lstlisting}
@@ -56,7 +56,7 @@ export function inviteTeacherScheme(): FORM_BUILDER_SCHEMA {
 
 Схема \textit{INPUT\_FIELD\_SCHEMA} отвечает за отображение и управление единичным полем ввода. Она включает обязательное поле \textit{name} (ключ в итоговом объекте данных), а также опциональные параметры: \textit{labelText} (отображаемая метка поля), \textit{hintText} (текст подсказки под полем), \textit{type} (уточнение типа поля, например \textit{select} или \textit{datetime}) и \textit{ownerInputComponent} (пользовательский компонент, принимающий параметры: \textit{value}, \textit{onChange}, \textit{isError} и \textit{onBlur}). Пример использования схемы представлен в листинге~\ref{lst:input-fields-schema}.
 
-\begin{lstlisting}[caption={Пример INPUT\_FIELD\_SCHEMA},label={lst:input-fields-schema}]
+\begin{lstlisting}[caption={Пример схемы INPUT\_FIELD\_SCHEMA},label={lst:input-fields-schema}]
 const schema: INPUT_FIELD_SCHEMA = {
   type: 'input_field',
   props: {
@@ -69,7 +69,7 @@ const schema: INPUT_FIELD_SCHEMA = {
 
 Схема \textit{ARRAY\_FIELDS\_SCHEMA} предназначена для формирования массива однотипных входных полей, где все вложенные элементы \textit{input\_field} объединяются в массив. Обязательными параметрами схемы являются: \textit{name} (имя массива в итоговой модели данных) и \textit{children} (массив схем элементов, составляющих каждую отдельную запись). Пример использования данной схемы представлен в листинге~\ref{lst:array-fields-schema}.
 
-\begin{lstlisting}[caption={Пример \textit{ARRAY\_FIELDS\_SCHEMA}},label={lst:array-fields-schema}]
+\begin{lstlisting}[caption={Пример схемы \textit{ARRAY\_FIELDS\_SCHEMA}},label={lst:array-fields-schema}]
 const schema: ARRAY_FIELDS_SCHEMA = [
   {
     type: 'array_fields',
@@ -91,7 +91,7 @@ const schema: ARRAY_FIELDS_SCHEMA = [
 
 Схема \textit{FORM\_WRAPPER\_SCHEMA} обеспечивает группировку полей без сброса индексов массивов, сохраняя вложенные элементы как объект. Обязательными параметрами выступают \textit{name} (ключ в результирующем объекте) и \textit{children} (схема вложенных элементов). Пример реализации приведён в листинге~\ref{lst:form-wrapper-schema}.
 
-\begin{lstlisting}[caption={Пример \textit{FORM\_WRAPPER\_SCHEMA}},label={lst:form-wrapper-schema}]
+\begin{lstlisting}[caption={Пример схемы \textit{FORM\_WRAPPER\_SCHEMA}},label={lst:form-wrapper-schema}]
 const schema: FORM_WRAPPER_SCHEMA = [{
   type: 'form_wrapper',
   props: {
@@ -112,7 +112,7 @@ const schema: FORM_WRAPPER_SCHEMA = [{
 
 Схема \textit{BLOCK\_WRAPPER\_SCHEMA} позволяет визуально группировать элементы без изменения структуры данных: поля в нём обрабатываются как часть текущего массива или объекта. Пример схемы показан в листинге~\ref{lst:block-wrapper-schema}.
 
-\begin{lstlisting}[caption={Пример \textit{BLOCK\_WRAPPER\_SCHEMA}},label={lst:block-wrapper-schema}]
+\begin{lstlisting}[caption={Пример схемы \textit{BLOCK\_WRAPPER\_SCHEMA}},label={lst:block-wrapper-schema}]
 const schema: BLOCK_WRAPPER_SCHEMA = [
   {
     type: 'block_wrapper',
@@ -133,7 +133,7 @@ const schema: BLOCK_WRAPPER_SCHEMA = [
 
 Схема \textit{REACT\_NODE\_SCHEMA} предназначена для вставки произвольного React-элемента в форму. Пример схемы показан в листинге~\ref{lst:react-node-schema}.
 
-\begin{lstlisting}[caption={Пример \textit{REACT\_NODE\_SCHEMA}},label={lst:react-node-schema}]
+\begin{lstlisting}[caption={Пример схемы \textit{REACT\_NODE\_SCHEMA}},label={lst:react-node-schema}]
 const schema: REACT_NODE_SCHEMA = [
   {
     type: 'react_node',

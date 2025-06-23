@@ -1,7 +1,7 @@
 \subsubsection{Работа с токеном JWT}
 Для передачи и обновления токена JWT в сессии используется функция обратного вызова \textit{jwt}, принимающий параметр \textit{trigger}, позволяющий определить сценарий обработки. Логика работы примерно следующая: при первом входе пользователя (\textit{trigger = signIn}) в токен записываются поля \textit{access\_token}, \textit{refresh\_token} и прочие метаданные; при последующих запросах проверяется срок жизни \textit{access\_token}, и при необходимости инициируется процесс его обновления (\textit{trigger = update}). Если же токен ещё валиден, возвращается неизменённая структура. Пример реализации приведён в листинге~\ref{lst:jwt-callback}.
 
-\begin{lstlisting}[caption={JWT-callback с учётом trigger}, label={lst:jwt-callback}]
+\begin{lstlisting}[caption={Функция обратоного вызова jwt}, label={lst:jwt-callback}]
 	async jwt({ token, trigger, user, session }): Promise<JWT> {
 		// Срабатывает при первичной аутентификации (signIn)
 		if (trigger === 'signIn') {
@@ -51,7 +51,7 @@
 
 Важным дополнением к этой концепции является механизм предотвращения <<гонки состояний>> при одновременном запросе нескольких API-методов, обнаруживающих, что токен доступа просрочен. В таких случаях на клиенте сохраняется единственный промис обновления, который переиспользуется всеми последующими запросами до получения ответа от сервера. Пример реализации этого механизма приведён в листинге~\ref{lst:race-condition}.
 
-\begin{lstlisting}[caption={Механизм предотвращения race condition при рефреше токена}, label={lst:race-condition}]
+\begin{lstlisting}[caption={Механизм предотвращения гонки состояний при рефреше токена}, label={lst:race-condition}]
 	export type RefreshPromiseStateType = Promise<JWT | null> | null;
 	let tokenPromiseState: RefreshPromiseStateType = null;
 	export const setTokenPromiseState = (

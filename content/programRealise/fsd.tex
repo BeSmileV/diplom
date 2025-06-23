@@ -18,9 +18,9 @@ Feature-Sliced Design (FSD) — это гибкий набор рекоменд�
 
 Слой \textit{entities} отвечает за интеграцию с внешними сервисами.
 \begin{enumerate}
-  \item \textit{api/}: тонкий слой-абстракция над HTTP-клиентами (\textit{fetch}/\textit{axios}), где функции названы в соответствии с операциями Swagger/OpenAPI (например, \textit{getUserProfile}, \textit{createOrder});
+  \item \textit{api/}: тонкий слой-абстракция над HTTP-клиентами (\textit{fetch}/\textit{axios}), где функции названы в соответствии с операциями в документации Swagger (например, \textit{getUserProfile}, \textit{createOrder});
   \item \textit{types/}: TypeScript-интерфейсы и типы для запросов и ответов (например, \textit{UserProfileResponseType}, \textit{OrderCreateRequestBodyType});
-  \item \textit{models/}: классы и mapper-функции для преобразования сырых данных из API в удобные объекты;
+  \item \textit{models/}: статические данные для сущности;
   \item \textit{services/}: обёртки для работы с локальным кэшем (IndexedDB, \textit{localStorage}) и реализации retry-логики и таймаутов.
 \end{enumerate}
 
@@ -37,7 +37,7 @@ Feature-Sliced Design (FSD) — это гибкий набор рекоменд�
 
 В листинге~\ref{lst:registration-university-widget} представлен презентационный компонент, отвечающий за отображение формы регистрации университета.
 
-\begin{lstlisting}[breaklines=true,caption=RegistrationUniversityWidget,label=lst:registration-university-widget]
+\begin{lstlisting}[caption=Функция RegistrationUniversityWidget,label=lst:registration-university-widget]
   // Presentation-компонент
   export function RegistrationUniversityWidget() {
     const { formDataRef, isError, setIsError, onSubmit, isLoading } =
@@ -51,7 +51,7 @@ Feature-Sliced Design (FSD) — это гибкий набор рекоменд�
 
 В листинге~\ref{lst:use-registration-university} представлена функция, содержащий логику взаимодействия пользователя с формой регистрации университета и обработки отправки запроса на регистрацию.
 
-\begin{lstlisting}[breaklines=true,caption=useRegistrationUniversity,label=lst:use-registration-university]
+\begin{lstlisting}[caption=Функция useRegistrationUniversity,label=lst:use-registration-university]
   // Smart-компонент: хук-фабрика
   export function useRegistrationUniversity() {
     const formDataRef = useRef<RegistrationData>();
